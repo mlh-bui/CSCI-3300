@@ -112,6 +112,7 @@ public abstract class Vehicle implements IVehicle {
 
     // NEWlY ADDED 4/9
     public void startSharedService() {
+        this.destination = this.service.get(1).getDropoffLocation();
         this.route = setDrivingRouteToDestination(this.location, this.destination);
         this.status = VehicleStatus.SHARED_SERVICE;
     } // method startService
@@ -156,8 +157,10 @@ public abstract class Vehicle implements IVehicle {
     @Override
     public void notifyArrivalAtPickupLocation() {
         // notify the company that the vehicle is at the pickup location and start the service
+
         this.company.arrivedAtPickupLocation(this);
         this.startService();
+
     } // method notifyArrivalAtPickupLocation
 
     // NEWLY ADDED 4/9
@@ -165,6 +168,7 @@ public abstract class Vehicle implements IVehicle {
     public void notifyArrivalAtSecondaryPickUpLocation() {
         this.company.arrivedAtSecondaryPickupLocation(this);
         this.startSharedService();
+
     }
 
     /**
@@ -205,7 +209,28 @@ public abstract class Vehicle implements IVehicle {
                 this.destination = ApplicationLibrary.randomLocation(this.location);
                 this.route = setDrivingRouteToDestination(this.location, this.destination);
             }
-            else {
+            else if (this.service.size() >= 2){
+                IService service = this.getCurrentService();
+
+                ILocation origin = this.service.get(0).getPickupLocation();
+                ILocation second = service.getDropoffLocation();
+                ILocation destination = this.getDestination();
+
+                if (this.location.getX() == origin.getX() && this.location.getY() == origin.getY()) {
+
+                    notifyArrivalAtPickupLocation();
+
+                } else if (this.location.getX() == second.getX() && this.location.getY() == second.getY()) {
+
+                    notifyArrivalAtSecondaryPickUpLocation();
+
+                } else if (this.location.getX() == destination.getX() && this.location.getY() == destination.getY()) {
+
+                    notifyArrivalAtDropoffLocation();
+
+                }
+
+            } else {
                 IService service = this.getCurrentService();
 
                 ILocation origin = service.getPickupLocation();
@@ -225,7 +250,7 @@ public abstract class Vehicle implements IVehicle {
     } // method move
 
     public IService getCurrentService() {
-        if (this.status == VehicleStatus.SERVICE) {
+        /*if (this.status == VehicleStatus.SERVICE) {
             IService closestService = null;
             int minDistance = Integer.MAX_VALUE;
 
@@ -241,7 +266,13 @@ public abstract class Vehicle implements IVehicle {
         else if (this.status == VehicleStatus.PICKUP)
             return this.service.get(this.service.size() - 1);
         else
+            return null;*/
+
+        if(getStatus() != VehicleStatus.FREE) {
+            return this.service.get(this.service.size() - 1); // get latest service
+        } else {
             return null;
+        }
     }
 
     public int calculateDistanceFromDropoff(IService service) {
@@ -288,7 +319,7 @@ public abstract class Vehicle implements IVehicle {
         if(this.status == VehicleStatus.FREE) {
             s = " is free with path " + showDrivingRoute();
         } else if (this.status == VehicleStatus.PICKUP) {
-            s = " to pick up user " + this.service.get(0).getUser().getId();
+            s = " to pick up user " + getCurrentService().getUser().getId();
         } else if (this.status == VehicleStatus.SHARED_SERVICE) {
             s = " in shared service";
         } else if (this.status == VehicleStatus.SERVICE) {

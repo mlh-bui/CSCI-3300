@@ -82,10 +82,6 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
             IService service = new Service(this.users.get(userIndex), origin, destination);
 
-            if(service.getPickupLocation() == this.vehicles.get(vehicleIndex).getLocation()) {
-                this.arrivedAtPickupLocation(this.vehicles.get(vehicleIndex));
-            }
-
             // assign the new service to the vehicle
 
             this.vehicles.get(vehicleIndex).pickService(service);
@@ -107,9 +103,10 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
     @Override
     public boolean provideSharedService(int user) {
         int userIndex = indexOfUserId(user);
+
         int vehicleIndex = findNearestVehicle(userIndex);
 
-        if (vehicleIndex != -1f) {
+        if (vehicleIndex != -1) {
 
             ILocation origin = this.users.get(0).getLocation(); // origin is the user's location
 
@@ -120,10 +117,6 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
             Service service = new Service(this.users.get(userIndex), origin, destination);    // create shared service
 
             this.vehicles.get(vehicleIndex).pickService(service);
-
-            if(service.getPickupLocation() == this.vehicles.get(vehicleIndex).getLocation()) {
-                this.arrivedAtSecondaryPickupLocation(this.vehicles.get(vehicleIndex));
-            }
 
             notifyObserver("User " + this.users.get(userIndex).getId() + " requests a SHARED service from " + service.toString() + ", the ride is assigned to " +
                     this.vehicles.get(vehicleIndex).getClass().getSimpleName() + " " + this.vehicles.get(vehicleIndex).getId() + " at location " +
@@ -149,11 +142,13 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
     @Override
     public void arrivedAtPickupLocation(IVehicle vehicle) {
         notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads user " + vehicle.getCurrentService().getUser().getId());
+        notifyObserver(vehicle.getClass().getSimpleName() + vehicle.getId() + "Status: " + vehicle.getStatus());
     }
 
     // NEWLY ADDED 4/9
     public void arrivedAtSecondaryPickupLocation(IVehicle vehicle) {
        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads SECOND user " + vehicle.getCurrentService().getUser().getId());
+        notifyObserver(vehicle.getClass().getSimpleName() + vehicle.getId() + " Status: " + vehicle.getStatus());
     }
 
     /**
@@ -254,11 +249,11 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
     // NEWLY ADDED 4/9
     private int findNearestVehicle(int user) { // in relation to user location
         int closest = -1;
-        double minDistance = 4.0;   // arbitrary distance to find "close" vehicle to user
+        double minDistance = Integer.MAX_VALUE;   // arbitrary distance to find "close" vehicle to user
         for(IVehicle v : this.vehicles) {
             if(v.isInService()) {
                 double distance = ApplicationLibrary.distance(v.getLocation(), users.get(user).getLocation());
-                if(distance < minDistance) { // if the distance of vehicle is smaller than 4.0
+                if(distance < minDistance && distance > 3) { // if the distance of vehicle is smaller than 4.0
                     minDistance = distance;
                     closest = this.vehicles.indexOf(v); // return index of the vehicle
                 }
