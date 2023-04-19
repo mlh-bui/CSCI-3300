@@ -46,7 +46,7 @@ public class User implements IUser {
     }
 
     @Override
-    public boolean getService() {
+    public boolean hasService() {
         return this.service;
     }
 
@@ -71,14 +71,20 @@ public class User implements IUser {
     }
 
     public void requestSharedService() {
-        if(this.company.provideSharedService(this.id)) {
+        // requests service 50% of the time
+        if(ApplicationLibrary.rand() % 2 == 0) {
             this.company.provideSharedService(this.id);
         }
     }
 
-    public boolean acceptShareRide() {
-        return ApplicationLibrary.rand() % 2 == 0;
-    }  // user accepts shared ride 50% of the time
+    @Override
+    public boolean cancelRide() {
+        boolean acceptRide = ApplicationLibrary.rand() % 5 == 0;
+        if(acceptRide) {
+            this.company.cancelService(this.id);
+        }
+        return acceptRide;
+    }
 
     /**
      * Rate of the service using stars from 1 to 5

@@ -64,17 +64,11 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
     @Override
     public void requestService() {
         // finds a "free" user and requests a service to the Taxi Company
-        int index;
-
-        do {
-            index = ApplicationLibrary.rand(users.size());
-        }
-        // continue searching while user at index has a service
-        while(users.get(index).getService());
+        IUser user = findFreeUser();
 
         // request service if the user does not have one yet
-        if(!users.get(index).getService()) {
-            users.get(index).requestService();
+        if(!user.hasService()) {
+            user.requestService();
         }
 
     } // method requestService
@@ -82,20 +76,46 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
     // NEWLY ADDED 4/9
     public void requestSharedService() {
         // finds a "free" user and requests a service to the Taxi Company
+        IUser user = findFreeUser();
+
+        // request service if the user does not have one yet
+        if(!user.hasService()) {
+            user.requestSharedService();
+        }
+
+    } // method requestService
+
+    public void cancelService() {
+        /*
+        int index;
+
+        do {
+            index = ApplicationLibrary.rand(vehicles.size());
+            System.out.println("while do loop? ");
+        }
+        while(vehicles.get(index).getStatus() != VehicleStatus.PICKUP);
+
+        if(users.get(index).hasService()) {
+            this.users.get(index).cancelRide();
+            System.out.println("WORKING APP SIM? ");
+        }
+
+        // request service if the user does not have one yet
+
+         */
+    }
+
+    private IUser findFreeUser() {
         int index;
 
         do {
             index = ApplicationLibrary.rand(users.size());
         }
         // continue searching while user at index has a service
-        while(users.get(index).getService());
+        while(users.get(index).hasService());
 
-        // request service if the user does not have one yet
-        if(!users.get(index).getService() && users.get(index).acceptShareRide()) {
-            users.get(index).requestSharedService();
-        }
-
-    } // method requestService
+        return users.get(index);
+    }
 
 
     /** Returns total services for company */

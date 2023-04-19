@@ -136,6 +136,7 @@ public abstract class Vehicle implements IVehicle {
                 this.statistics.updateStars(s.getStars());
                 this.statistics.updateReviews();
             }
+
             this.statistics.updateDistance(s.calculateDistance());
         }
 
@@ -250,7 +251,7 @@ public abstract class Vehicle implements IVehicle {
 
     public IService getService() {
         if(getStatus() != VehicleStatus.FREE) {
-            return this.service.get(this.service.size() - 1); // get latest service
+            return this.service.get(this.service.size() - 1); // latest service
         } else {
             return null;
         }
@@ -265,14 +266,15 @@ public abstract class Vehicle implements IVehicle {
     public int calculateCost() {
         // returns the cost of the service as the distance
         int cost = 0;
-        for(IService s : service) {
-            if(s.isShared()) {
-                cost += s.calculateDistance() * 0.7;
-            }
-            else {
-                cost = s.calculateDistance();
-            }
+        int cost2 = 0;
+        cost = service.get(0).calculateDistance();
+        if(service.size() > 1) {
+            cost2 = service.get(1).calculateDistance();
+            System.out.println(cost2);
+            //cost *= 0.7;
         }
+        cost += cost2;
+        System.out.println("Distance " + cost);
 
         return cost;
     }
@@ -343,13 +345,5 @@ public abstract class Vehicle implements IVehicle {
         return route;
     } // method setDrivingRouteToDestination
 
-
-    public int calculateDistanceFromPickUp(IService service) {
-        // calculates the distance from the vehicle location to the pickup location
-
-        ILocation origin = service.getPickupLocation();
-
-        return Math.abs(this.location.getX() - origin.getX()) + Math.abs(this.location.getY() - origin.getY());
-    }
 
 } // abstract class Vehicle

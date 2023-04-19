@@ -67,6 +67,8 @@ public class TestProgram {
 
 
 
+
+
         // Instantiate the Taxi company and the Application simulator
         TaxiCompany taxify = new TaxiCompany("Taxify", users, vehicles);
         ApplicationSimulator app = new ApplicationSimulator(taxify, users, vehicles);
@@ -90,7 +92,6 @@ public class TestProgram {
 
             app.update();
 
-            app.requestSharedService();
 
             if (ApplicationLibrary.rand() % 4 == 0) {
                 app.requestService();

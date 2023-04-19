@@ -12,4 +12,7 @@ public interface ITaxiCompany {
     void addObserver(IObserver observer);
     void notifyObserver(String message);
 
+    boolean cancelService(int user); // NEWLY ADDED 4/19
+
+
 } // interface ITaxiCompany

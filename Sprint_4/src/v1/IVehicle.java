@@ -26,9 +26,7 @@ public interface IVehicle {
     String showDrivingRoute();
     String toString();
 
-    public IService getService(); // ADDED
-    public List<IService> getServices(); // ADDED
-
-     int calculateDistanceFromPickUp(IService service);
+    IService getService(); // ADDED
+    List<IService> getServices(); // ADDED
 
 }
