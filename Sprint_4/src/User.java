@@ -70,8 +70,8 @@ public class User implements IUser {
     }
 
     public boolean acceptShareRide() {
-        return ApplicationLibrary.rand() % 2 == 0 ? true : false;
-    }
+        return ApplicationLibrary.rand() % 2 == 0;
+    }  // user accepts shared ride 50% of the time
 
     /**
      * Rate of the service using stars from 1 to 5

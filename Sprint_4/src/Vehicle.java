@@ -59,7 +59,7 @@ public abstract class Vehicle implements IVehicle {
 
     // NEWLY CHANGED
     @Override
-    public List<IService> getService() {
+    public List<IService> getServices() {
         return this.service;
     }
 
@@ -93,6 +93,7 @@ public abstract class Vehicle implements IVehicle {
     @Override
     public void pickService(IService service) {
         // pick a service, set destination to the service pickup location, and status to "pickup"
+
         this.service.add(service);
         this.destination = service.getPickupLocation();
         this.route = setDrivingRouteToDestination(this.location, this.destination);
@@ -210,11 +211,11 @@ public abstract class Vehicle implements IVehicle {
                 this.route = setDrivingRouteToDestination(this.location, this.destination);
             }
             else if (this.service.size() >= 2){
-                IService service = this.getCurrentService();
+                IService service = this.getService();
 
                 ILocation origin = this.service.get(0).getPickupLocation();
                 ILocation second = service.getDropoffLocation();
-                ILocation destination = this.getDestination();
+                ILocation destination = this.destination;
 
                 if (this.location.getX() == origin.getX() && this.location.getY() == origin.getY()) {
 
@@ -231,7 +232,7 @@ public abstract class Vehicle implements IVehicle {
                 }
 
             } else {
-                IService service = this.getCurrentService();
+                IService service = this.getService();
 
                 ILocation origin = service.getPickupLocation();
                 ILocation destination = service.getDropoffLocation();
@@ -249,7 +250,7 @@ public abstract class Vehicle implements IVehicle {
         }
     } // method move
 
-    public IService getCurrentService() {
+    public IService getService() {
         /*if (this.status == VehicleStatus.SERVICE) {
             IService closestService = null;
             int minDistance = Integer.MAX_VALUE;
@@ -319,11 +320,11 @@ public abstract class Vehicle implements IVehicle {
         if(this.status == VehicleStatus.FREE) {
             s = " is free with path " + showDrivingRoute();
         } else if (this.status == VehicleStatus.PICKUP) {
-            s = " to pick up user " + getCurrentService().getUser().getId();
+            s = " to pick up user " + this.getService().getUser().getId();
         } else if (this.status == VehicleStatus.SHARED_SERVICE) {
             s = " in shared service";
         } else if (this.status == VehicleStatus.SERVICE) {
-            s = " in regular service";
+            s = " in regular service " + this.getService().getUser().getId();
         }
         return this.id + " at " + this.location + " driving to " + this.destination + s;
 

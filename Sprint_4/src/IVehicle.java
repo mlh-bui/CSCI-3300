@@ -7,7 +7,6 @@ public interface IVehicle {
     ILocation getDestination();
     IStatistics getStatistics();
     VehicleStatus getStatus();  // NEWLY ADDED 4/9
-    List<IService> getService(); // NEWLY ADDED 4/9
     void setService(List<IService> service); // NEWLY ADDED 4/10
     void setCompany(ITaxiCompany company);
 
@@ -25,6 +24,7 @@ public interface IVehicle {
     String showDrivingRoute();
     String toString();
 
-    public IService getCurrentService(); // ADDED
+    public IService getService(); // ADDED
+    public List<IService> getServices(); // ADDED
 
 }

@@ -106,9 +106,10 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
         int vehicleIndex = findNearestVehicle(userIndex);
 
+        // if a vehicle is close enough to user requesting shared ride
         if (vehicleIndex != -1) {
 
-            ILocation origin = this.users.get(0).getLocation(); // origin is the user's location
+            ILocation origin = this.users.get(userIndex).getLocation(); // origin is the user's location
 
             ILocation destination = this.vehicles.get(0).getDestination(); // destination = original destination
 
@@ -141,13 +142,12 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
      */
     @Override
     public void arrivedAtPickupLocation(IVehicle vehicle) {
-        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads user " + vehicle.getCurrentService().getUser().getId());
-        notifyObserver(vehicle.getClass().getSimpleName() + vehicle.getId() + "Status: " + vehicle.getStatus());
+        notifyObserver(String.format("%-8s", vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads user " + vehicle.getService().getUser().getId());
     }
 
     // NEWLY ADDED 4/9
     public void arrivedAtSecondaryPickupLocation(IVehicle vehicle) {
-       notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads SECOND user " + vehicle.getCurrentService().getUser().getId());
+       notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads SECOND user " + vehicle.getService().getUser().getId());
         notifyObserver(vehicle.getClass().getSimpleName() + vehicle.getId() + " Status: " + vehicle.getStatus());
     }
 
@@ -159,16 +159,23 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
      */
     @Override
     public void arrivedAtDropoffLocation(IVehicle vehicle) {
-        // a vehicle arrives at the drop-off location
+        // Original code for single user rating
 
-        IService service = vehicle.getService().get(0);
+        /*IService service = vehicle.getService().get(0);
         int user = service.getUser().getId();
         int userIndex = indexOfUserId(user);
 
-        // the taxi company requests the user to rate the service, and updates its status
-
         this.users.get(userIndex).rateService(service);
-        this.users.get(userIndex).setService(false);
+        this.users.get(userIndex).setService(false);*/
+
+        int user = vehicle.getServices().get(0).getUser().getId();
+        for(IService service : vehicle.getServices()) {
+            user = service.getUser().getId();
+            int userIndex = indexOfUserId(user);
+
+            this.users.get(userIndex).rateService(service);
+            this.users.get(userIndex).setService(false);
+        }
 
         // update the counter of services
 
@@ -192,7 +199,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
     public void cancelService(IVehicle vehicle) {
         if (vehicle.getStatus() == VehicleStatus.PICKUP) {
 
-            IService service = vehicle.getService().get(0);
+            IService service = vehicle.getService();
             int user = service.getUser().getId();
             int userIndex = indexOfUserId(user);
 
@@ -249,16 +256,17 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
     // NEWLY ADDED 4/9
     private int findNearestVehicle(int user) { // in relation to user location
         int closest = -1;
-        double minDistance = Integer.MAX_VALUE;   // arbitrary distance to find "close" vehicle to user
+        double minDistance = 2;   // arbitrary distance to find "close" vehicle to user
         for(IVehicle v : this.vehicles) {
             if(v.isInService()) {
                 double distance = ApplicationLibrary.distance(v.getLocation(), users.get(user).getLocation());
-                if(distance < minDistance && distance > 3) { // if the distance of vehicle is smaller than 4.0
+                if(distance > minDistance && distance < 5) { // if the distance of vehicle is smaller than 4.0
                     minDistance = distance;
                     closest = this.vehicles.indexOf(v); // return index of the vehicle
                 }
             }
         }
+
         return closest;
     }
 

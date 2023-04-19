@@ -14,15 +14,12 @@ public class Service implements IService {
     /** Rating of service */
     private int stars;
 
-    private boolean sharedRide;
-
     /** Basic constructor */
     public Service(IUser user, ILocation pickup, ILocation dropoff) {
         this.user = user;
         this.pickup = pickup;
         this.dropoff = dropoff;
         this.stars = 0;
-        this.sharedRide = false;
     }
 
     /* Accessors & Mutators */
