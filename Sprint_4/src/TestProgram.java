@@ -56,7 +56,7 @@ public class TestProgram {
         vehicles.add(v2);
         vehicles.add(v3);
         vehicles.add(v4);
-        /*
+
         vehicles.add(v5);
         vehicles.add(v6);
         vehicles.add(v7);
@@ -64,7 +64,7 @@ public class TestProgram {
         vehicles.add(v9);
         vehicles.add(v10);
 
-        */
+
 
         // Instantiate the Taxi company and the Application simulator
         TaxiCompany taxify = new TaxiCompany("Taxify", users, vehicles);

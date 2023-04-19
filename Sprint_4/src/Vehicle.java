@@ -210,12 +210,13 @@ public abstract class Vehicle implements IVehicle {
                 this.destination = ApplicationLibrary.randomLocation(this.location);
                 this.route = setDrivingRouteToDestination(this.location, this.destination);
             }
+            // if there is more than one service for the vehicle
             else if (this.service.size() >= 2){
                 IService service = this.getService();
 
                 ILocation origin = this.service.get(0).getPickupLocation();
-                ILocation second = service.getDropoffLocation();
-                ILocation destination = this.destination;
+                ILocation second = service.getPickupLocation();
+                ILocation destination = service.getDropoffLocation();
 
                 if (this.location.getX() == origin.getX() && this.location.getY() == origin.getY()) {
 
@@ -230,7 +231,7 @@ public abstract class Vehicle implements IVehicle {
                     notifyArrivalAtDropoffLocation();
 
                 }
-
+                // if there is a single service
             } else {
                 IService service = this.getService();
 

@@ -5,6 +5,7 @@ public interface IUser {
     String getLastName();
     boolean getService();
     ILocation getLocation(); // NEWLY ADDED 4/9
+    public void setLocation(ILocation location) ; // NEWLY ADDED 4/19
     void setService(boolean service);
     void requestService();
     void requestSharedService(); // NEWLY ADDED
