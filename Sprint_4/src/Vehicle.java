@@ -124,17 +124,14 @@ public abstract class Vehicle implements IVehicle {
      */
     @Override
     public void endService() {
-        // update vehicle statistics
-
-        this.statistics.updateBilling(this.calculateCost());
-        //this.statistics.updateDistance(this.service.get(0).calculateDistance());
-        //this.statistics.updateDistance(this.service.get(1).calculateDistance()); // might not need?
-        this.statistics.updateServices();
 
         // if the service is rated by the user, update statistics
         // includes share service
 
         for (IService s : service) {
+            this.statistics.updateBilling(this.calculateCost());
+            this.statistics.updateServices();
+
             if(s.getStars() != 0) {
                 this.statistics.updateStars(s.getStars());
                 this.statistics.updateReviews();
@@ -252,37 +249,11 @@ public abstract class Vehicle implements IVehicle {
     } // method move
 
     public IService getService() {
-        /*if (this.status == VehicleStatus.SERVICE) {
-            IService closestService = null;
-            int minDistance = Integer.MAX_VALUE;
-
-            for (IService service : this.service) {
-                int distance = this.calculateDistanceFromDropoff(service);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestService = service;
-                }
-            }
-            return closestService;
-        }
-        else if (this.status == VehicleStatus.PICKUP)
-            return this.service.get(this.service.size() - 1);
-        else
-            return null;*/
-
         if(getStatus() != VehicleStatus.FREE) {
             return this.service.get(this.service.size() - 1); // get latest service
         } else {
             return null;
         }
-    }
-
-    public int calculateDistanceFromDropoff(IService service) {
-        // calculates the distance from the vehicle location to the pickup location
-
-        ILocation destination = service.getDropoffLocation();
-
-        return Math.abs(this.location.getX() - destination.getX()) + Math.abs(this.location.getY() - destination.getY());
     }
 
     /**
@@ -295,8 +266,14 @@ public abstract class Vehicle implements IVehicle {
         // returns the cost of the service as the distance
         int cost = 0;
         for(IService s : service) {
-            cost += s.calculateDistance();
+            if(s.isShared()) {
+                cost += s.calculateDistance() * 0.7;
+            }
+            else {
+                cost = s.calculateDistance();
+            }
         }
+
         return cost;
     }
 

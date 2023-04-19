@@ -117,7 +117,11 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
             Service service = new Service(this.users.get(userIndex), origin, destination);    // create shared service
 
+            service.setShared(true);
+
             this.vehicles.get(vehicleIndex).pickService(service);
+
+            System.out.println(this.vehicles.get(vehicleIndex).calculateCost() + " COST OKAY? ");
 
             notifyObserver("User " + this.users.get(userIndex).getId() + " requests a SHARED service from " + service.toString() + ", the ride is assigned to " +
                     this.vehicles.get(vehicleIndex).getClass().getSimpleName() + " " + this.vehicles.get(vehicleIndex).getId() + " at location " +

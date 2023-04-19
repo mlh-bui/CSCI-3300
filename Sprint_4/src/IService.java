@@ -8,4 +8,6 @@ public interface IService {
     int calculateDistance();
     String toString();
 
+    boolean isShared();
+
 } // interface IService

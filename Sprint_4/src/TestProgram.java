@@ -91,6 +91,8 @@ public class TestProgram {
 
                 app.update();
 
+                app.requestSharedService();
+
                 if (ApplicationLibrary.rand() % 4 == 0) {
                     app.requestService();
                     app.requestSharedService();

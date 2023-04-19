@@ -14,12 +14,15 @@ public class Service implements IService {
     /** Rating of service */
     private int stars;
 
+    private boolean isShared;
+
     /** Basic constructor */
     public Service(IUser user, ILocation pickup, ILocation dropoff) {
         this.user = user;
         this.pickup = pickup;
         this.dropoff = dropoff;
         this.stars = 0;
+        this.isShared = false;
     }
 
     /* Accessors & Mutators */
@@ -63,4 +66,11 @@ public class Service implements IService {
         return this.getPickupLocation().toString() + " to " + this.getDropoffLocation().toString();
     }
 
+    public void setShared(boolean shared) {
+        isShared = shared;
+    }
+
+    public boolean isShared() {
+        return isShared;
+    }
 } // class Service
