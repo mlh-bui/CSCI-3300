@@ -1,4 +1,4 @@
-// V.2 Project: Taxify
+package v1;// V.2 Project: Taxify
 // Marissa Bui - CSCI 3300 - 2/17
 
 public class Location implements ILocation {

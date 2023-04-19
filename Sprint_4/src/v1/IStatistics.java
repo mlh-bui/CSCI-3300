@@ -1,3 +1,5 @@
+package v1;
+
 public interface IStatistics {
 
     int getServices();

@@ -1,3 +1,5 @@
+package v2;
+
 import java.util.Random;
 
 public class ApplicationLibrary {

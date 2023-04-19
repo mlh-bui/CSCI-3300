@@ -1,3 +1,5 @@
+package v2;
+
 public interface IApplicationSimulator {
 
     void show();

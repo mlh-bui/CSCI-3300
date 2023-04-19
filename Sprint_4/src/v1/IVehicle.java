@@ -1,3 +1,5 @@
+package v1;
+
 import java.util.List;
 
 public interface IVehicle {
@@ -26,5 +28,7 @@ public interface IVehicle {
 
     public IService getService(); // ADDED
     public List<IService> getServices(); // ADDED
+
+     int calculateDistanceFromPickUp(IService service);
 
 }

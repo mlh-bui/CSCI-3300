@@ -1,3 +1,5 @@
+package v1;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +58,6 @@ public class TestProgram {
         vehicles.add(v2);
         vehicles.add(v3);
         vehicles.add(v4);
-
         vehicles.add(v5);
         vehicles.add(v6);
         vehicles.add(v7);
@@ -80,28 +81,26 @@ public class TestProgram {
         for(int i = 0; i < 5; i++) {
             app.requestService();
         }
-            // app.requestService();
+        do {
+            // we show the status of the simulation
 
-            do {
-                // we show the status of the simulation
+            app.show();
 
-                app.show();
+            System.out.println("\n");
 
-                System.out.println("\n");
+            app.update();
 
-                app.update();
+            app.requestSharedService();
 
+            if (ApplicationLibrary.rand() % 4 == 0) {
+                app.requestService();
                 app.requestSharedService();
+            }
 
-                if (ApplicationLibrary.rand() % 4 == 0) {
-                    app.requestService();
-                    app.requestSharedService();
-                }
+        } while (app.getTotalServices() != 0);
 
-            } while (app.getTotalServices() != 0);
-
-            // after the end of the service show statistics
-            app.showStatistics();
+        // after the end of the service show statistics
+        app.showStatistics();
 
 
     } // method main

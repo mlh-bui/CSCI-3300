@@ -1,4 +1,4 @@
-// V.2 Project: Taxify
+package v1;// V.2 Project: Taxify
 // Marissa Bui - CSCI 3300 - 2/17
 
 import java.util.ArrayList;
@@ -342,5 +342,14 @@ public abstract class Vehicle implements IVehicle {
 
         return route;
     } // method setDrivingRouteToDestination
+
+
+    public int calculateDistanceFromPickUp(IService service) {
+        // calculates the distance from the vehicle location to the pickup location
+
+        ILocation origin = service.getPickupLocation();
+
+        return Math.abs(this.location.getX() - origin.getX()) + Math.abs(this.location.getY() - origin.getY());
+    }
 
 } // abstract class Vehicle
