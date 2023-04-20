@@ -203,25 +203,26 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
     /** INCOMPLETE METHOD */
     public boolean cancelService(int user) {
         int userIndex = indexOfUserId(user);
-        IVehicle vehicle = null;
 
         // find the user's vehicle
         for(IVehicle v: vehicles) {
-            if(v.getServices().get(0).getUser() == users.get(userIndex)) {
-                vehicle = v;
+            // if the vehicle has a service & it's user matches the user asking for a cancellation
+            if(v.getService() != null && users.get(userIndex) == v.getService().getUser()) {
+
+                v.endService();
+
+                this.users.get(userIndex).setService(false);
+
+                // update the counter of services
+
+                this.totalServices--;
+
+                notifyObserver(String.format("%-8s",v.getClass().getSimpleName()) + v.getId() + " is free after user " + user + " cancelled the ride");
+
+                return true;
             }
         }
-
-        vehicle.endService();
-
-        this.users.get(userIndex).setService(false);
-
-        // update the counter of services
-
-        this.totalServices--;
-
-        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " is free after user " + user + " cancelled the ride");
-        return true;
+        return false;
 
     } // cancelService
 

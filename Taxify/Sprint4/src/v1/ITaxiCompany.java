@@ -13,7 +13,7 @@ public interface ITaxiCompany {
     void arrivedAtDropOffLocation(IVehicle vehicle);
     void addObserver(IObserver observer);
     void notifyObserver(String message);
-    boolean cancelService(int user); // Note: Bool might be unnecessary?
+    boolean cancelService(int user);
 
 
 } // interface ITaxiCompany

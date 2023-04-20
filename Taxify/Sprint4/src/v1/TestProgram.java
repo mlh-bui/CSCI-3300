@@ -90,8 +90,10 @@ public class TestProgram {
 
 
             if (ApplicationLibrary.rand() % 4 == 0) {
-                app.requestService();
-                app.requestSharedService();
+               app.requestService();
+               app.requestSharedService();
+            } else {
+                app.cancelService();
             }
 
         } while (app.getTotalServices() != 0);

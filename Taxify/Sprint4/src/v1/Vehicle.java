@@ -210,16 +210,18 @@ public abstract class Vehicle implements IVehicle {
             else {
                 IService service = this.getService();
 
+                // get origin and destination of current service
                 ILocation origin = service.getPickupLocation();
                 ILocation destination = service.getDropoffLocation();
 
+                // for multiple services aka shared services
                 if (this.service.size() >= 2) {
-                    service = this.getService();
 
                     origin = this.service.get(0).getPickupLocation();
                     destination = service.getDropoffLocation();
                     ILocation second = service.getPickupLocation();
 
+                    // notify when vehicle arrives at secondary pickup (current service pickup location)
                     if (ApplicationLibrary.isSameLocation(this.location, second)) {
 
                         notifyArrivalAtSecondaryPickUpLocation();
@@ -227,6 +229,7 @@ public abstract class Vehicle implements IVehicle {
                     }
                 }
 
+                // notify when vehicle arrives at pickup or destination
                 if (ApplicationLibrary.isSameLocation(this.location,origin)) {
 
                     notifyArrivalAtPickupLocation();
@@ -236,7 +239,6 @@ public abstract class Vehicle implements IVehicle {
                     notifyArrivalAtDropoffLocation();
 
                 }
-
             }
         }
     } // method move
@@ -257,20 +259,17 @@ public abstract class Vehicle implements IVehicle {
      */
     @Override
     public int calculateCost() {
-        // returns the cost of the service as the distance
         int cost = 0;
-        int cost2 = 0;
-        cost = service.get(0).calculateDistance();
-        if(service.size() > 1) {
-            cost2 = service.get(1).calculateDistance();
-            System.out.println(cost2);
-            //cost *= 0.7;
+        for(IService s : service) {
+            if(this.service.size() > 1) {
+                cost += (int) (s.calculateDistance() * 0.7);
+            } else {
+                cost = s.calculateDistance();
+            }
         }
-        cost += cost2;
-        System.out.println("Distance " + cost);
 
         return cost;
-    }
+    } // method calculateCost
 
     /**
      * Shows locations on route as a string
@@ -293,11 +292,11 @@ public abstract class Vehicle implements IVehicle {
         if(this.status == VehicleStatus.FREE) {
             s = " is free with path " + showDrivingRoute();
         } else if (this.status == VehicleStatus.PICKUP) {
-            s = " to pick up user " + this.getService().getUser().getId();
+            s = " to pick up user " + this.getService().getUser().getId() + " Distance: " + this.getService().calculateDistance();
         } else if (this.status == VehicleStatus.SHARED_SERVICE) {
-            s = " in shared service";
+            s = " in shared service" + " Distance: " + this.getService().calculateDistance();
         } else if (this.status == VehicleStatus.SERVICE) {
-            s = " in regular service " + this.getService().getUser().getId();
+            s = " in regular service " + this.getService().getUser().getId() + " Distance: " + this.getService().calculateDistance();
         }
         return this.id + " at " + this.location + " driving to " + this.destination + s;
 

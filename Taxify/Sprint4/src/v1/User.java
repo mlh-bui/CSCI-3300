@@ -79,12 +79,10 @@ public class User implements IUser {
     }
 
     @Override
-    public boolean cancelRide() {
-        boolean acceptRide = ApplicationLibrary.rand() % 5 == 0;
-        if(acceptRide) {
+    public void cancelRide() {
+        if(ApplicationLibrary.rand() % 5 == 0) {
             this.company.cancelService(this.id);
         }
-        return acceptRide;
     }
 
     /**
