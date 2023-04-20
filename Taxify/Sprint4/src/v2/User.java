@@ -1,5 +1,6 @@
-// V.2 Project: Taxify
-// Marissa Bui - CSCI 3300 - 2/17
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
+package v2;
 
 public class User implements IUser {
     /** User ID */
@@ -46,12 +47,17 @@ public class User implements IUser {
     }
 
     @Override
-    public boolean getService() {
+    public boolean hasService() {
         return this.service;
     }
 
     public ILocation getLocation() {
         return location;
+    }
+
+    @Override
+    public void setLocation(ILocation location) {
+        this.location = location;
     }
 
     @Override
@@ -66,11 +72,19 @@ public class User implements IUser {
     }
 
     public void requestSharedService() {
-        this.company.provideSharedService(this.id);
+        // requests service 50% of the time
+        if(ApplicationLibrary.rand() % 2 == 0) {
+            this.company.provideSharedService(this.id);
+        }
     }
 
-    public boolean acceptShareRide() {
-        return ApplicationLibrary.rand() % 2 == 0 ? true : false;
+    @Override
+    public boolean cancelRide() {
+        boolean acceptRide = ApplicationLibrary.rand() % 5 == 0;
+        if(acceptRide) {
+            this.company.cancelService(this.id);
+        }
+        return acceptRide;
     }
 
     /**

@@ -1,5 +1,6 @@
-// V.2 Project: Taxify
-// Marissa Bui - CSCI 3300 - 2/17
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
+package v1;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,6 @@ public abstract class Vehicle implements IVehicle {
 
     /** Service */
     private List<IService> service;
-    //private IService service;
 
     /** Vehicle status */
     private VehicleStatus status;
@@ -57,15 +57,14 @@ public abstract class Vehicle implements IVehicle {
         return this.destination;
     }
 
-    // NEWLY CHANGED
     @Override
-    public IService getService(int index) {
-        return this.service.get(index);
+    public List<IService> getServices() {
+        return this.service;
     }
 
     @Override
-    public void setService(IService service) {
-        this.service.add(service);
+    public void setService(List<IService> service) {
+        this.service = service;
     }
 
     @Override
@@ -74,7 +73,6 @@ public abstract class Vehicle implements IVehicle {
     }
 
     @Override
-    // NEWLY ADDED 4/9
     public VehicleStatus getStatus() {
         return this.status;
     }
@@ -92,11 +90,10 @@ public abstract class Vehicle implements IVehicle {
      */
     @Override
     public void pickService(IService service) {
+        // pick a service, set destination to the service pickup location, and status to "pickup"
 
-        setService(service);
-
+        this.service.add(service);
         this.destination = service.getPickupLocation();
-
         this.route = setDrivingRouteToDestination(this.location, this.destination);
         this.status = VehicleStatus.PICKUP;
     } // method pickService
@@ -114,6 +111,7 @@ public abstract class Vehicle implements IVehicle {
 
     // NEWlY ADDED 4/9
     public void startSharedService() {
+        this.destination = this.service.get(1).getDropoffLocation();
         this.route = setDrivingRouteToDestination(this.location, this.destination);
         this.status = VehicleStatus.SHARED_SERVICE;
     } // method startService
@@ -124,21 +122,19 @@ public abstract class Vehicle implements IVehicle {
      */
     @Override
     public void endService() {
-        // update vehicle statistics
-
-        this.statistics.updateBilling(this.calculateCost());
-        //this.statistics.updateDistance(this.service.get(0).calculateDistance());
-        //this.statistics.updateDistance(this.service.get(1).calculateDistance()); // might not need?
-        this.statistics.updateServices();
 
         // if the service is rated by the user, update statistics
         // includes share service
 
         for (IService s : service) {
+            this.statistics.updateBilling(this.calculateCost());
+            this.statistics.updateServices();
+
             if(s.getStars() != 0) {
                 this.statistics.updateStars(s.getStars());
                 this.statistics.updateReviews();
             }
+
             this.statistics.updateDistance(s.calculateDistance());
         }
 
@@ -158,8 +154,10 @@ public abstract class Vehicle implements IVehicle {
     @Override
     public void notifyArrivalAtPickupLocation() {
         // notify the company that the vehicle is at the pickup location and start the service
+
         this.company.arrivedAtPickupLocation(this);
         this.startService();
+
     } // method notifyArrivalAtPickupLocation
 
     // NEWLY ADDED 4/9
@@ -167,6 +165,7 @@ public abstract class Vehicle implements IVehicle {
     public void notifyArrivalAtSecondaryPickUpLocation() {
         this.company.arrivedAtSecondaryPickupLocation(this);
         this.startSharedService();
+
     }
 
     /**
@@ -175,7 +174,7 @@ public abstract class Vehicle implements IVehicle {
      */
     @Override
     public void notifyArrivalAtDropoffLocation() {
-        this.company.arrivedAtDropoffLocation(this);
+        this.company.arrivedAtDropOffLocation(this);
         this.endService();
     } // method notifyArrivalAtDropOffLocation
 
@@ -201,41 +200,55 @@ public abstract class Vehicle implements IVehicle {
         this.route.remove(0);
 
         if (this.route.isEmpty()) {
-            if (this.service.isEmpty()) {
+            if (this.service == null || this.service.isEmpty() ) {
                 // the vehicle continues its random drive
 
                 this.destination = ApplicationLibrary.randomLocation(this.location);
                 this.route = setDrivingRouteToDestination(this.location, this.destination);
             }
+            // if there is more than one service for the vehicle
             else {
-                // checks if the vehicle has arrived to a pickup or drop off location
+                IService service = this.getService();
 
-                ILocation origin = service.get(0).getPickupLocation();
-                ILocation destination = service.get(0).getDropoffLocation();
+                ILocation origin = service.getPickupLocation();
+                ILocation destination = service.getDropoffLocation();
 
-                if (this.location.getX() == origin.getX() && this.location.getY() == origin.getY()) {
+                if (this.service.size() >= 2) {
+                    service = this.getService();
+
+                    origin = this.service.get(0).getPickupLocation();
+                    destination = service.getDropoffLocation();
+                    ILocation second = service.getPickupLocation();
+
+                    if (ApplicationLibrary.isSameLocation(this.location, second)) {
+
+                        notifyArrivalAtSecondaryPickUpLocation();
+
+                    }
+                }
+
+                if (ApplicationLibrary.isSameLocation(this.location,origin)) {
 
                     notifyArrivalAtPickupLocation();
 
-                } else if (this.location.getX() == destination.getX() && this.location.getY() == destination.getY()) {
+                } else if (ApplicationLibrary.isSameLocation(this.location,destination)) {
 
                     notifyArrivalAtDropoffLocation();
 
                 }
+
             }
         }
     } // method move
 
-    public IService getCurrentService() {
-        if (this.isInService()) {
-            startSharedService();
-            return null;
-        } else if (this.status == VehicleStatus.PICKUP) {
-            return this.service.get(this.service.size() - 1);
+
+    public IService getService() {
+        if(getStatus() != VehicleStatus.FREE) {
+            return this.service.get(this.service.size() - 1); // latest service
         } else {
             return null;
         }
-    }
+    } // method getService
 
     /**
      * Cost of service is the distance * vehicle rate
@@ -246,9 +259,16 @@ public abstract class Vehicle implements IVehicle {
     public int calculateCost() {
         // returns the cost of the service as the distance
         int cost = 0;
-        for(IService s : service) {
-            cost += s.calculateDistance();
+        int cost2 = 0;
+        cost = service.get(0).calculateDistance();
+        if(service.size() > 1) {
+            cost2 = service.get(1).calculateDistance();
+            System.out.println(cost2);
+            //cost *= 0.7;
         }
+        cost += cost2;
+        System.out.println("Distance " + cost);
+
         return cost;
     }
 
@@ -273,11 +293,11 @@ public abstract class Vehicle implements IVehicle {
         if(this.status == VehicleStatus.FREE) {
             s = " is free with path " + showDrivingRoute();
         } else if (this.status == VehicleStatus.PICKUP) {
-            s = " to pick up user " + this.service.get(0).getUser().getId();
+            s = " to pick up user " + this.getService().getUser().getId();
         } else if (this.status == VehicleStatus.SHARED_SERVICE) {
             s = " in shared service";
         } else if (this.status == VehicleStatus.SERVICE) {
-            s = " in regular service";
+            s = " in regular service " + this.getService().getUser().getId();
         }
         return this.id + " at " + this.location + " driving to " + this.destination + s;
 
@@ -318,4 +338,4 @@ public abstract class Vehicle implements IVehicle {
         return route;
     } // method setDrivingRouteToDestination
 
-} // abstract class Vehicle
+} // class Vehicle

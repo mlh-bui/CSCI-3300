@@ -1,3 +1,5 @@
+package v2;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,15 +58,12 @@ public class TestProgram {
         vehicles.add(v2);
         vehicles.add(v3);
         vehicles.add(v4);
-        /*
         vehicles.add(v5);
         vehicles.add(v6);
         vehicles.add(v7);
         vehicles.add(v8);
         vehicles.add(v9);
         vehicles.add(v10);
-
-        */
 
         // Instantiate the Taxi company and the Application simulator
         TaxiCompany taxify = new TaxiCompany("Taxify", users, vehicles);
@@ -77,29 +76,28 @@ public class TestProgram {
         app.show();
 
         // simulates requests of service
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 5; i++) {
             app.requestService();
         }
-            // app.requestService();
+        do {
+            // we show the status of the simulation
 
-            do {
-                // we show the status of the simulation
+            app.show();
 
-                app.show();
+            System.out.println("\n");
 
-                System.out.println("\n");
+            app.update();
 
-                app.update();
 
-                if (ApplicationLibrary.rand() % 4 == 0) {
-                    app.requestService();
-                    app.requestSharedService();
-                }
+            if (ApplicationLibrary.rand() % 4 == 0) {
+                app.requestService();
+                app.requestSharedService();
+            }
 
-            } while (app.getTotalServices() != 0);
+        } while (app.getTotalServices() != 0);
 
-            // after the end of the service show statistics
-            app.showStatistics();
+        // after the end of the service show statistics
+        app.showStatistics();
 
 
     } // method main
