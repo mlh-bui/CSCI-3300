@@ -296,7 +296,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
         int maxDistance = 5;   // Vehicle cannot be more than 3 blocks away
         for(IVehicle v : this.vehicles) {
             int distance = ApplicationLibrary.distance(v.getLocation(), users.get(userIndex).getLocation());
-            if(v.isInService() && minDistance < distance && distance < maxDistance) {
+            if(v.getStatus() == VehicleStatus.SERVICE && minDistance < distance && distance < maxDistance) {
                 closest = this.vehicles.indexOf(v); // return index of the vehicle
             }
         }

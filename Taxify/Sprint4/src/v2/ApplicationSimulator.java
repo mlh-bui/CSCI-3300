@@ -90,23 +90,18 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
     /** Simulates a user request to a cancel a service */
     public void cancelService() {
-        /*
-        int index;
+        int index = -1;
 
-        do {
-            index = ApplicationLibrary.rand(vehicles.size());
-            System.out.println("while do loop? ");
+        for(int i = 0; i < this.vehicles.size(); i++) {
+            if(vehicles.get(i).getStatus() == VehicleStatus.PICKUP) {
+                index = i;
+            }
         }
-        while(vehicles.get(index).getStatus() != VehicleStatus.PICKUP);
 
-        if(users.get(index).hasService()) {
+        if(index != -1 && users.get(index).hasService()) {
             this.users.get(index).cancelRide();
-            System.out.println("WORKING APP SIM? ");
         }
 
-        // request service if the user does not have one yet
-
-         */
     } // method cancelService
 
 

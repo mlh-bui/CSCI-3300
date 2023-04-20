@@ -188,11 +188,6 @@ public abstract class Vehicle implements IVehicle {
         return this.status == VehicleStatus.FREE;
     }
 
-    // To use to find in service vehicles for shared ride feature <?  // NEWLY ADDED 4/9
-    public boolean isInService() {
-        return this.status == VehicleStatus.SERVICE;
-    }
-
     /** Simulates a vehicle moving from location to location */
     @Override
     public void move() {
@@ -292,11 +287,11 @@ public abstract class Vehicle implements IVehicle {
         if(this.status == VehicleStatus.FREE) {
             s = " is free with path " + showDrivingRoute();
         } else if (this.status == VehicleStatus.PICKUP) {
-            s = " to pick up user " + this.getService().getUser().getId() + " Distance: " + this.getService().calculateDistance();
+            s = " to pick up user " + this.getService().getUser().getId();
         } else if (this.status == VehicleStatus.SHARED_SERVICE) {
             s = " in shared service" + " Distance: " + this.getService().calculateDistance();
         } else if (this.status == VehicleStatus.SERVICE) {
-            s = " in regular service " + this.getService().getUser().getId() + " Distance: " + this.getService().calculateDistance();
+            s = " in regular service " + this.getService().getUser().getId();
         }
         return this.id + " at " + this.location + " driving to " + this.destination + s;
 

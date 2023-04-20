@@ -122,10 +122,10 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
             ILocation currentLocation = this.vehicles.get(vehicleIndex).getLocation();
             ILocation origin = this.users.get(userIndex).getLocation();
-            ILocation destination = this.vehicles.get(vehicleIndex).getDestination(); // destination = original destination
+            ILocation destination = ApplicationLibrary.randomLocation(currentLocation); // destination = original destination
 
             // change the origin of the user if they are at the destination or current location
-            while (ApplicationLibrary.isSameLocation(origin,destination) || ApplicationLibrary.isSameLocation(origin,currentLocation)) {
+            while (ApplicationLibrary.isSameLocation(origin,currentLocation)) {
                 origin = ApplicationLibrary.randomLocation();
             }
 
@@ -159,7 +159,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
     /** Notify observer when a vehicle arrive at second user's pick up location */
     public void arrivedAtSecondaryPickupLocation(IVehicle vehicle) {
-        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads SECOND user " + vehicle.getService().getUser().getId());
+        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads second user " + vehicle.getService().getUser().getId());
     }
 
     /**
@@ -170,23 +170,35 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
     public void arrivedAtDropOffLocation(IVehicle vehicle) {
 
         // All services in the vehicle rate the service and end service
-        for(IService service : vehicle.getServices()) {
-            int user = service.getUser().getId();
-            int userIndex = indexOfUserId(user);
-
-            this.users.get(userIndex).rateService(service);
-            this.users.get(userIndex).setService(false);
-
-            // update the counter of services
-
-            this.totalServices--;
-
-            notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " drops off user " + user);
-        }
+        int user = vehicle.getServices().get(0).getUser().getId();
+        int userIndex = indexOfUserId(user);
 
 
+        this.users.get(userIndex).rateService(vehicle.getServices().get(0));
+        this.users.get(userIndex).setService(false);
+
+        // update the counter of services
+
+        this.totalServices--;
+
+        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " drops off user " + user);
 
     } // method arrivedAtDropOffLocation
+
+    @Override
+    public void arrivedAtSecondaryDropOffLocation(IVehicle vehicle) {
+        int user = vehicle.getService().getUser().getId();
+        int userIndex = indexOfUserId(user);
+
+        this.users.get(userIndex).rateService(vehicle.getService());
+        this.users.get(userIndex).setService(false);
+
+        // update the counter of services
+
+        this.totalServices--;
+
+        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " drops off SECOND user " + user);
+    }
 
     /** Method to add an observer */
     @Override
@@ -200,28 +212,28 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
         this.observer.updateObserver(message);
     }
 
-    /** INCOMPLETE METHOD */
     public boolean cancelService(int user) {
         int userIndex = indexOfUserId(user);
-        IVehicle vehicle = null;
 
         // find the user's vehicle
         for(IVehicle v: vehicles) {
-            if(v.getServices().get(0).getUser() == users.get(userIndex)) {
-                vehicle = v;
+            // if the vehicle has a service & it's user matches the user asking for a cancellation
+            if(v.getService() != null && users.get(userIndex) == v.getService().getUser()) {
+
+                v.endService();
+
+                this.users.get(userIndex).setService(false);
+
+                // update the counter of services
+
+                this.totalServices--;
+
+                notifyObserver(String.format("%-8s",v.getClass().getSimpleName()) + v.getId() + " is free after user " + user + " cancelled the ride");
+
+                return true;
             }
         }
-
-        vehicle.endService();
-
-        this.users.get(userIndex).setService(false);
-
-        // update the counter of services
-
-        this.totalServices--;
-
-        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " is free after user " + user + " cancelled the ride");
-        return true;
+        return false;
 
     } // cancelService
 
@@ -295,7 +307,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
         int maxDistance = 5;   // Vehicle cannot be more than 3 blocks away
         for(IVehicle v : this.vehicles) {
             int distance = ApplicationLibrary.distance(v.getLocation(), users.get(userIndex).getLocation());
-            if(v.isInService() && minDistance < distance && distance < maxDistance) {
+            if(v.getStatus() == VehicleStatus.SERVICE && minDistance < distance && distance < maxDistance) {
                 closest = this.vehicles.indexOf(v); // return index of the vehicle
             }
         }

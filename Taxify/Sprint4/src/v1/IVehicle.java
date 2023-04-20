@@ -18,7 +18,6 @@ public interface IVehicle {
     void notifyArrivalAtSecondaryPickUpLocation();
     void notifyArrivalAtDropoffLocation();
     boolean isFree();
-    boolean isInService();
     void move();
     int calculateCost();
     String showDrivingRoute();

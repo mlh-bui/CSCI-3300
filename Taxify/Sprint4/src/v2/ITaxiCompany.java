@@ -11,9 +11,10 @@ public interface ITaxiCompany {
     void arrivedAtPickupLocation(IVehicle vehicle);
     void arrivedAtSecondaryPickupLocation(IVehicle vehicle);
     void arrivedAtDropOffLocation(IVehicle vehicle);
+    void arrivedAtSecondaryDropOffLocation(IVehicle vehicle);
     void addObserver(IObserver observer);
     void notifyObserver(String message);
-    boolean cancelService(int user); // Note: Bool might be unnecessary?
+    boolean cancelService(int user);
 
 
 } // interface ITaxiCompany

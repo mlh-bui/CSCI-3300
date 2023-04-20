@@ -18,6 +18,6 @@ public interface IUser {
     String toString();
     void setCompany(ITaxiCompany company);
 
-    boolean cancelRide();
+    void cancelRide();
 
 } // interface IUser
