@@ -1,3 +1,6 @@
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
+
 package v1;
 
 import java.util.Random;
@@ -37,4 +40,9 @@ public class ApplicationLibrary {
 
         return destination;
     }
+
+    public static boolean isSameLocation(ILocation l1, ILocation l2) {
+        return l1.getX() == l2.getX() && l1.getY() == l2.getY();
+    }
+
 } // class Application Library

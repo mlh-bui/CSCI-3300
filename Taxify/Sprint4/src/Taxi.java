@@ -1,8 +1,6 @@
 // V.2 Project: Taxify
 // Marissa Bui - CSCI 3300 - 2/17
 
-package taxify;
-
 public class Taxi extends Vehicle {
 
     /** Basic Constructor for Taxi */

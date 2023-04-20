@@ -1,5 +1,3 @@
-package taxify;
-
 import java.util.Random;
 
 public class ApplicationLibrary {

@@ -1,13 +1,11 @@
-package taxify;
-
 public interface IService {
 
-    public IUser getUser();
-    public ILocation getPickupLocation();
-    public ILocation getDropoffLocation();
-    public int getStars();
-    public void setStars(int stars);
-    public int calculateDistance();
-    public String toString();
+    IUser getUser();
+    ILocation getPickupLocation();
+    ILocation getDropoffLocation();
+    int getStars();
+    void setStars(int stars);
+    int calculateDistance();
+    String toString();
 
 } // interface IService

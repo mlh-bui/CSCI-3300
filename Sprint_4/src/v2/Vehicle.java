@@ -143,30 +143,15 @@ public abstract class Vehicle implements IVehicle {
         }
 
         // set service to null, and status to "free"
-        //this.service = null; // used to be above destination test
 
-        if(this.status == VehicleStatus.SHARED_SERVICE) {
-            this.destination = farthestService().getDropoffLocation();
-            //this.status = VehicleStatus.FREE;
-            System.out.println("YO");
+        if(this.status != VehicleStatus.SHARED_SERVICE) {
             this.service = null;
-            //this.route = setDrivingRouteToDestination(this.location, this.destination);
-
-        } else {
-            System.out.println("hello");
             this.destination = ApplicationLibrary.randomLocation(this.location);
             this.status = VehicleStatus.FREE;
-            this.service = null;
+        } else {
+            this.destination = this.service.get(1).getDropoffLocation();
         }
-
-        //this.service = null;
-
         this.route = setDrivingRouteToDestination(this.location, this.destination);
-
-
-        //this.route = setDrivingRouteToDestination(this.location, this.destination);
-
-
 
     } // method endService
 
@@ -238,7 +223,7 @@ public abstract class Vehicle implements IVehicle {
                 IService service = this.getService();
 
                 ILocation origin = this.service.get(0).getPickupLocation();
-                ILocation secondPickup = service.getPickupLocation();
+                ILocation secondPickup = this.service.get(1).getPickupLocation();
 
                 ILocation destination = closestService().getDropoffLocation();
                 ILocation secondDestination = farthestService().getDropoffLocation();

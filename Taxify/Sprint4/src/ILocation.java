@@ -1,8 +1,6 @@
-package taxify;
-
 public interface ILocation {
-    public int getX();
-    public int getY();
-    public String toString();
+    int getX();
+    int getY();
+    String toString();
 
 } // interface ILocation

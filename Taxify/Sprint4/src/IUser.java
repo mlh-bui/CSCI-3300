@@ -1,15 +1,16 @@
-package taxify;
-
 public interface IUser {
 
-    public int getId();
-    public String getFirstName();
-    public String getLastName();
-    public boolean getService();
-    public void setService(boolean service);
-    public void requestService();
-    public void rateService(IService service);
-    public String toString();
-    public void setCompany(ITaxiCompany company);
+    int getId();
+    String getFirstName();
+    String getLastName();
+    boolean getService();
+    ILocation getLocation(); // NEWLY ADDED 4/9
+    void setService(boolean service);
+    void requestService();
+    void requestSharedService(); // NEWLY ADDED
+    void rateService(IService service);
+    boolean acceptShareRide(); // NEWLY ADDED
+    String toString();
+    void setCompany(ITaxiCompany company);
 
 } // interface IUser

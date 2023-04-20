@@ -1,5 +1,6 @@
-package v1;// V.2 Project: Taxify
-// Marissa Bui - CSCI 3300 - 2/17
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
+package v1;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,6 @@ public abstract class Vehicle implements IVehicle {
 
     /** Service */
     private List<IService> service;
-    //private IService service;
 
     /** Vehicle status */
     private VehicleStatus status;
@@ -57,7 +57,6 @@ public abstract class Vehicle implements IVehicle {
         return this.destination;
     }
 
-    // NEWLY CHANGED
     @Override
     public List<IService> getServices() {
         return this.service;
@@ -74,7 +73,6 @@ public abstract class Vehicle implements IVehicle {
     }
 
     @Override
-    // NEWLY ADDED 4/9
     public VehicleStatus getStatus() {
         return this.status;
     }
@@ -176,7 +174,7 @@ public abstract class Vehicle implements IVehicle {
      */
     @Override
     public void notifyArrivalAtDropoffLocation() {
-        this.company.arrivedAtDropoffLocation(this);
+        this.company.arrivedAtDropOffLocation(this);
         this.endService();
     } // method notifyArrivalAtDropOffLocation
 
@@ -209,45 +207,40 @@ public abstract class Vehicle implements IVehicle {
                 this.route = setDrivingRouteToDestination(this.location, this.destination);
             }
             // if there is more than one service for the vehicle
-            else if (this.service.size() >= 2){
-                IService service = this.getService();
-
-                ILocation origin = this.service.get(0).getPickupLocation();
-                ILocation second = service.getPickupLocation();
-                ILocation destination = service.getDropoffLocation();
-
-                if (this.location.getX() == origin.getX() && this.location.getY() == origin.getY()) {
-
-                    notifyArrivalAtPickupLocation();
-
-                } else if (this.location.getX() == second.getX() && this.location.getY() == second.getY()) {
-
-                    notifyArrivalAtSecondaryPickUpLocation();
-
-                } else if (this.location.getX() == destination.getX() && this.location.getY() == destination.getY()) {
-
-                    notifyArrivalAtDropoffLocation();
-
-                }
-                // if there is a single service
-            } else {
+            else {
                 IService service = this.getService();
 
                 ILocation origin = service.getPickupLocation();
                 ILocation destination = service.getDropoffLocation();
 
-                if (this.location.getX() == origin.getX() && this.location.getY() == origin.getY()) {
+                if (this.service.size() >= 2) {
+                    service = this.getService();
+
+                    origin = this.service.get(0).getPickupLocation();
+                    destination = service.getDropoffLocation();
+                    ILocation second = service.getPickupLocation();
+
+                    if (ApplicationLibrary.isSameLocation(this.location, second)) {
+
+                        notifyArrivalAtSecondaryPickUpLocation();
+
+                    }
+                }
+
+                if (ApplicationLibrary.isSameLocation(this.location,origin)) {
 
                     notifyArrivalAtPickupLocation();
 
-                } else if (this.location.getX() == destination.getX() && this.location.getY() == destination.getY()) {
+                } else if (ApplicationLibrary.isSameLocation(this.location,destination)) {
 
                     notifyArrivalAtDropoffLocation();
 
                 }
+
             }
         }
     } // method move
+
 
     public IService getService() {
         if(getStatus() != VehicleStatus.FREE) {
@@ -255,7 +248,7 @@ public abstract class Vehicle implements IVehicle {
         } else {
             return null;
         }
-    }
+    } // method getService
 
     /**
      * Cost of service is the distance * vehicle rate
@@ -345,5 +338,4 @@ public abstract class Vehicle implements IVehicle {
         return route;
     } // method setDrivingRouteToDestination
 
-
-} // abstract class Vehicle
+} // class Vehicle

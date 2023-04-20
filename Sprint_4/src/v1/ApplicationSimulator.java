@@ -1,3 +1,6 @@
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
+
 package v1;
 
 import java.util.List;
@@ -27,8 +30,8 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
         System.out.println("\n" + this.company.getName() + " status \n");
 
-        for (int i=0; i<this.vehicles.size(); i++) {
-            System.out.println(this.vehicles.get(i).toString());
+        for (IVehicle vehicle : this.vehicles) {
+            System.out.println(vehicle.toString());
         }
     } // method show
 
@@ -63,7 +66,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
     /** Simulates user request for a service */
     @Override
     public void requestService() {
-        // finds a "free" user and requests a service to the Taxi Company
+        // gets free user
         IUser user = findFreeUser();
 
         // request service if the user does not have one yet
@@ -73,9 +76,9 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
     } // method requestService
 
-    // NEWLY ADDED 4/9
+    /** Simulates user request for a shared service */
     public void requestSharedService() {
-        // finds a "free" user and requests a service to the Taxi Company
+        // gets free user
         IUser user = findFreeUser();
 
         // request service if the user does not have one yet
@@ -85,6 +88,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
     } // method requestService
 
+    /** Simulates a user request to a cancel a service */
     public void cancelService() {
         /*
         int index;
@@ -103,19 +107,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
         // request service if the user does not have one yet
 
          */
-    }
-
-    private IUser findFreeUser() {
-        int index;
-
-        do {
-            index = ApplicationLibrary.rand(users.size());
-        }
-        // continue searching while user at index has a service
-        while(users.get(index).hasService());
-
-        return users.get(index);
-    }
+    } // method cancelService
 
 
     /** Returns total services for company */
@@ -129,4 +121,16 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
     public void updateObserver(String message) {
         System.out.println(message);
     }
+
+    private IUser findFreeUser() {
+        int index;
+
+        do {
+            index = ApplicationLibrary.rand(users.size());
+        }
+        // continue searching while user at index has a service
+        while(users.get(index).hasService());
+
+        return users.get(index); // return a user without a service
+    } // method findFreeUser
 }

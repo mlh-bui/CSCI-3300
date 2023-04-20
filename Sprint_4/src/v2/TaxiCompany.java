@@ -169,7 +169,17 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
     // NEWLY ADDED 4/20
     public void arrivedAtDropoffLocation(IVehicle vehicle) {
-        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " drops off user " + vehicle.getService().getUser().getId());
+
+        int user = vehicle.getService().getUser().getId();
+        int userIndex = indexOfUserId(user);
+
+        this.users.get(userIndex).rateService(vehicle.getService());
+        this.users.get(userIndex).setService(false);
+
+        this.totalServices--;
+
+        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " drops off user " + user);
+
         // notifyObserver(vehicle.getClass().getSimpleName() + " " + vehicle.getId() + " Status: " + vehicle.getStatus());
         // used for testing
     }
@@ -182,21 +192,17 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
      */
     @Override
     public void arrivedAtSecondaryDropOffLocation(IVehicle vehicle) {
-        // Original code for single user rating
 
-        for(IService service : vehicle.getServices()) {
-            int user = service.getUser().getId();
-            int userIndex = indexOfUserId(user);
+        int user = vehicle.getService().getUser().getId();
+        int userIndex = indexOfUserId(user);
 
-            this.users.get(userIndex).rateService(service);
-            this.users.get(userIndex).setService(false);
+        this.users.get(userIndex).rateService(vehicle.getService());
+        this.users.get(userIndex).setService(false);
 
-            // update the counter of services
+        this.totalServices--;
 
-            this.totalServices--;
+        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " drops off user " + user);
 
-            notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " drops off user " + user);
-        }
     } // method arrivedAtDropoffLocation
 
     /** Method to add an observer */

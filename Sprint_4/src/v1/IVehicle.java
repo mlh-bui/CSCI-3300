@@ -8,25 +8,22 @@ public interface IVehicle {
     ILocation getLocation();
     ILocation getDestination();
     IStatistics getStatistics();
-    VehicleStatus getStatus();  // NEWLY ADDED 4/9
-    void setService(List<IService> service); // NEWLY ADDED 4/10
+    VehicleStatus getStatus();
+    void setService(List<IService> service);
     void setCompany(ITaxiCompany company);
-
-    void pickService(IService service); // method pickService
-
+    void pickService(IService service);
     void startService();
     void endService();
     void notifyArrivalAtPickupLocation();
-    void notifyArrivalAtSecondaryPickUpLocation(); // NEWLY ADDED 4/9
+    void notifyArrivalAtSecondaryPickUpLocation();
     void notifyArrivalAtDropoffLocation();
     boolean isFree();
-    boolean isInService();  // NEWLY ADDED 4/9
+    boolean isInService();
     void move();
     int calculateCost();
     String showDrivingRoute();
     String toString();
-
-    IService getService(); // ADDED
-    List<IService> getServices(); // ADDED
+    IService getService();
+    List<IService> getServices();
 
 }

@@ -1,5 +1,6 @@
-package v1;// V.2 Project: Taxify
-// Marissa Bui - CSCI 3300 - 2/17
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
+package v1;
 
 public class Statistics implements IStatistics {
     /**

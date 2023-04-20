@@ -1,5 +1,7 @@
-package v1;// V.2 Project: Taxify
-// Marissa Bui - CSCI 3300 - 2/17
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300 - 4/20
+
+package v1;
 
 public class Location implements ILocation {
     /** x-coordinate for map */

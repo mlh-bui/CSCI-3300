@@ -1,6 +1,4 @@
-package taxify;
-
-import java.util.List;
+import java.util.*;
 
 public class TaxiCompany implements ITaxiCompany, ISubject {
     /** Company Name */
@@ -29,11 +27,9 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
         this.totalServices = 0;
 
         // set the taxi company for users and vehicles
-        for (int i=0; i<this.users.size(); i++)
-            this.users.get(i).setCompany(this);
+        for (IUser user : this.users) user.setCompany(this);
 
-        for (int i=0; i<this.vehicles.size(); i++)
-            this.vehicles.get(i).setCompany(this);
+        for (IVehicle vehicle : this.vehicles) vehicle.setCompany(this);
     }
 
     /* Accessor & Mutator Methods */
@@ -81,12 +77,12 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
             Service service = new Service(this.users.get(userIndex), origin, destination);
 
-            // NEW CHANGES MADE: AFTER THE REQUEST, IF THE VEHICLE IS IN THE SAME LOCATION AS THE PICK UP LOCATION OF THE USER THEN WE NOTIFY THE COMPANY OF THE ARRIVAL AT PICK UP
             if(service.getPickupLocation() == this.vehicles.get(vehicleIndex).getLocation()) {
                 this.arrivedAtPickupLocation(this.vehicles.get(vehicleIndex));
             }
 
             // assign the new service to the vehicle
+
 
             this.vehicles.get(vehicleIndex).pickService(service);
 
@@ -104,6 +100,42 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
         return false;
     } // method requestService
 
+    @Override
+    public boolean provideSharedService(int user) {
+        int userIndex = indexOfUserId(user);
+        int vehicleIndex = findNearestVehicle(userIndex);
+
+        if (vehicleIndex != -1) {
+
+            ILocation origin = this.users.get(userIndex).getLocation(); // origin is the user's location
+
+            ILocation destination = this.vehicles.get(vehicleIndex).getDestination(); // destination = original destination
+
+            this.users.get(userIndex).setService(true);     // set the second user's service as true
+
+            Service service = new Service(this.users.get(userIndex), origin, destination);    // create shared service
+
+            this.vehicles.get(vehicleIndex).pickService(service);
+
+            if(service.getPickupLocation() == this.vehicles.get(vehicleIndex).getLocation()) {
+                this.arrivedAtSecondaryPickupLocation(this.vehicles.get(vehicleIndex));
+            }
+
+            notifyObserver("User " + this.users.get(userIndex).getId() + " requests a SHARED service from " + service.toString() + ", the ride is assigned to " +
+                    this.vehicles.get(vehicleIndex).getClass().getSimpleName() + " " + this.vehicles.get(vehicleIndex).getId() + " at location " +
+                    this.vehicles.get(vehicleIndex).getLocation().toString());
+
+            // update the counter of services
+
+            this.totalServices++;
+
+            return true;
+        }
+
+        return false;
+    } // method provideSharedService
+
+
 
     /**
      * Notify observer when a vehicle arrives at pick-up location
@@ -112,7 +144,12 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
      */
     @Override
     public void arrivedAtPickupLocation(IVehicle vehicle) {
-        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads user " + vehicle.getService().getUser().getId());
+        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads user " + vehicle.getService(0).getUser().getId());
+    }
+
+    // NEWLY ADDED 4/9
+    public void arrivedAtSecondaryPickupLocation(IVehicle vehicle) {
+        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads SECOND user " + vehicle.getService(0).getUser().getId());
     }
 
     /**
@@ -125,7 +162,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
     public void arrivedAtDropoffLocation(IVehicle vehicle) {
         // a vehicle arrives at the drop-off location
 
-        IService service = vehicle.getService();
+        IService service = vehicle.getService(0);
         int user = service.getUser().getId();
         int userIndex = indexOfUserId(user);
 
@@ -152,6 +189,27 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
     public void notifyObserver(String message) {
         this.observer.updateObserver(message);
     }
+
+    public void cancelService(IVehicle vehicle) {
+        if (vehicle.getStatus() == VehicleStatus.PICKUP) {
+
+            IService service = vehicle.getService(0);
+            int user = service.getUser().getId();
+            int userIndex = indexOfUserId(user);
+
+            vehicle.setService(null); // think this is wrong
+
+            this.users.get(userIndex).setService(false);
+            vehicle.endService();
+
+            // update the counter of services
+
+            this.totalServices--;
+
+            notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " is free after user " + user + " cancelled the ride");
+
+        }
+    } // cancelService
 
     /**
      * Gets the index of a random free vehicle in vehicle list
@@ -187,6 +245,23 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
             }
         }
         return -1;
+    } // method indexOfUserId
+
+    // NEWLY ADDED 4/9
+    private int findNearestVehicle(int user) { // in relation to user location
+        int closest = -1;
+        double minDistance = 4.0;   // arbitrary distance to find "close" vehicle to user
+        for(IVehicle v : this.vehicles) {
+            if(v.isInService()) {
+                double distance = ApplicationLibrary.distance(v.getLocation(), users.get(user).getLocation());
+                if(distance < minDistance) { // if the distance of vehicle is smaller than 4.0
+                    minDistance = distance;
+                    closest = this.vehicles.indexOf(v); // return index of the vehicle
+                }
+            }
+        }
+        return closest;
     }
+
 
 }

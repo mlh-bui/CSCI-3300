@@ -65,10 +65,6 @@ public class TestProgram {
         vehicles.add(v9);
         vehicles.add(v10);
 
-
-
-
-
         // Instantiate the Taxi company and the Application simulator
         TaxiCompany taxify = new TaxiCompany("Taxify", users, vehicles);
         ApplicationSimulator app = new ApplicationSimulator(taxify, users, vehicles);

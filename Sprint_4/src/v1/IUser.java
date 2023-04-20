@@ -1,3 +1,5 @@
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
 package v1;
 
 public interface IUser {
@@ -6,13 +8,13 @@ public interface IUser {
     String getFirstName();
     String getLastName();
     boolean hasService();
-    ILocation getLocation(); // NEWLY ADDED 4/9
-    void setLocation(ILocation location) ; // NEWLY ADDED 4/19
+    ILocation getLocation();
+    void setLocation(ILocation location) ;
     void setService(boolean service);
     void requestService();
-    void requestSharedService(); // NEWLY ADDED
+    void requestSharedService();
     void rateService(IService service);
-    //boolean acceptShareRide(); // NEWLY ADDED
+    //boolean acceptShareRide();
     String toString();
     void setCompany(ITaxiCompany company);
 

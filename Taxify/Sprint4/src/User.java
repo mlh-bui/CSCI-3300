@@ -1,8 +1,6 @@
 // V.2 Project: Taxify
 // Marissa Bui - CSCI 3300 - 2/17
 
-package taxify;
-
 public class User implements IUser {
     /** User ID */
     private int id;
@@ -65,6 +63,14 @@ public class User implements IUser {
     @Override
     public void requestService() {
         this.company.provideService(this.id);
+    }
+
+    public void requestSharedService() {
+        this.company.provideSharedService(this.id);
+    }
+
+    public boolean acceptShareRide() {
+        return ApplicationLibrary.rand() % 2 == 0 ? true : false;
     }
 
     /**

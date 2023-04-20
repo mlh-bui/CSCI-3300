@@ -1,5 +1,3 @@
-package taxify;
-
 import java.util.List;
 
 public class ApplicationSimulator implements IApplicationSimulator, IObserver {
@@ -75,6 +73,24 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
         // request service if the user does not have one yet
         if(!users.get(index).getService()) {
             users.get(index).requestService();
+        }
+
+    } // method requestService
+
+    // NEWLY ADDED 4/9
+    public void requestSharedService() {
+        // finds a "free" user and requests a service to the Taxi Company
+        int index;
+
+        do {
+            index = ApplicationLibrary.rand(users.size());
+        }
+        // continue searching while user at index has a service
+        while(users.get(index).getService());
+
+        // request service if the user does not have one yet
+        if(!users.get(index).getService()) {
+            users.get(index).requestSharedService();
         }
 
     } // method requestService
