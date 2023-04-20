@@ -1,4 +1,4 @@
-package v2;// V.2 Project: Taxify
+// V.2 Project: Taxify
 // Marissa Bui - CSCI 3300 - 2/17
 
 public class User implements IUser {
@@ -45,18 +45,13 @@ public class User implements IUser {
         return this.lastName;
     }
 
-    @Override
-    public boolean hasService() {
-        return this.service;
-    }
-
     public ILocation getLocation() {
         return location;
     }
 
     @Override
-    public void setLocation(ILocation location) {
-        this.location = location;
+    public boolean getService() {
+        return this.service;
     }
 
     @Override
@@ -70,20 +65,8 @@ public class User implements IUser {
         this.company.provideService(this.id);
     }
 
-    public void requestSharedService() {
-        // requests service 50% of the time
-        if(ApplicationLibrary.rand() % 2 == 0) {
-            this.company.provideSharedService(this.id);
-        }
-    }
-
-    @Override
-    public boolean cancelRide() {
-        boolean acceptRide = ApplicationLibrary.rand() % 5 == 0;
-        if(acceptRide) {
-            this.company.cancelService(this.id);
-        }
-        return acceptRide;
+    public boolean acceptShareRide() {
+        return ApplicationLibrary.rand() % 2 == 0 ? true : false;
     }
 
     /**
@@ -107,5 +90,4 @@ public class User implements IUser {
     public void setCompany(ITaxiCompany company) {
         this.company = company;
     }
-
 } // class User

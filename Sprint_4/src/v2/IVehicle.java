@@ -20,13 +20,13 @@ public interface IVehicle {
     void notifyArrivalAtSecondaryPickUpLocation(); // NEWLY ADDED 4/9
     void notifyArrivalAtDropoffLocation();
     boolean isFree();
-    boolean isInService();  // NEWLY ADDED 4/9
+    //boolean isInService();  // NEWLY ADDED 4/9
     void move();
     int calculateCost();
     String showDrivingRoute();
     String toString();
 
-    public IService getService(); // ADDED
-    public List<IService> getServices(); // ADDED
+    IService getService(); // ADDED
+    List<IService> getServices(); // ADDED
 
 }
