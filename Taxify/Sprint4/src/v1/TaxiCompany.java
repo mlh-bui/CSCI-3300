@@ -200,31 +200,30 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
         this.observer.updateObserver(message);
     }
 
-    /** INCOMPLETE METHOD */
-    public boolean cancelService(int user) {
-        int userIndex = indexOfUserId(user);
+    // NEW CHANGES IVE MADE (MIA)
+   public void cancelService(IVehicle vehicle) {
+        if (vehicle.getStatus() == VehicleStatus.PICKUP) {
+        	 // a vehicle drops off the user at the location where the service is cancelled
+        	
+            IService service = vehicle.getService();
+            int user = service.getUser().getId();
+            int userIndex = indexOfUserId(user);
 
-        // find the user's vehicle
-        for(IVehicle v: vehicles) {
-            // if the vehicle has a service & it's user matches the user asking for a cancellation
-            if(v.getService() != null && users.get(userIndex) == v.getService().getUser()) {
+            // taxi company doesn't request any rating since we cancel the service
+            if(vehicle.getServices().size() == 1 )
+            	 notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " is free after user " + user + " cancelled the ride"); 
+            else 
+              notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " resumes with the other service(s) after user " + user + " cancelled the ride"); 
 
-                v.endService();
+            this.users.get(userIndex).setService(false);
+            vehicle.endService(); // the service is not done, its just cancelled 
 
-                this.users.get(userIndex).setService(false);
+            // update the counter of services
 
-                // update the counter of services
-
-                this.totalServices--;
-
-                notifyObserver(String.format("%-8s",v.getClass().getSimpleName()) + v.getId() + " is free after user " + user + " cancelled the ride");
-
-                return true;
-            }
+            this.totalServices--;
         }
-        return false;
-
-    } // cancelService
+    }
+    // cancelService
 
     /**
      * Gets the index of a random free vehicle in vehicle list
