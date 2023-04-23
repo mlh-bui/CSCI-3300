@@ -109,9 +109,9 @@ public abstract class Vehicle implements IVehicle {
         this.status = VehicleStatus.SERVICE;
     } // method startService
 
-    // NEWlY ADDED 4/9
+
     public void startSharedService() {
-        this.destination = this.service.get(1).getDropoffLocation();
+        this.destination = this.service.get(0).getDropoffLocation();
         this.route = setDrivingRouteToDestination(this.location, this.destination);
         this.status = VehicleStatus.SHARED_SERVICE;
     } // method startService
@@ -130,7 +130,7 @@ public abstract class Vehicle implements IVehicle {
             this.statistics.updateBilling(this.calculateCost());
             this.statistics.updateServices();
 
-            if(s.getStars() != 0) {
+            if (s.getStars() != 0) {
                 this.statistics.updateStars(s.getStars());
                 this.statistics.updateReviews();
             }
@@ -138,12 +138,16 @@ public abstract class Vehicle implements IVehicle {
             this.statistics.updateDistance(s.calculateDistance());
         }
 
-        // set service to null, and status to "free"
-
-        this.service = null;
-        this.destination = ApplicationLibrary.randomLocation(this.location);
-        this.route = setDrivingRouteToDestination(this.location, this.destination);
-        this.status = VehicleStatus.FREE;
+        if(this.service.size() == 1) {
+            this.service = null;
+            this.destination = ApplicationLibrary.randomLocation(this.location);
+            this.route = setDrivingRouteToDestination(this.location, this.destination);
+            this.status = VehicleStatus.FREE;
+        } else {
+            this.service.remove(0);
+            this.destination = getService().getDropoffLocation();
+            this.route = setDrivingRouteToDestination(this.location,this.destination);
+        }
 
     } // method endService
 
@@ -160,7 +164,6 @@ public abstract class Vehicle implements IVehicle {
 
     } // method notifyArrivalAtPickupLocation
 
-    // NEWLY ADDED 4/9
     @Override
     public void notifyArrivalAtSecondaryPickUpLocation() {
         this.company.arrivedAtSecondaryPickupLocation(this);
@@ -208,39 +211,32 @@ public abstract class Vehicle implements IVehicle {
             }
             // if there is more than one service for the vehicle
             else {
-                IService service = this.getService();
+                IService currentService = this.getService();
 
                 // get origin and destination of current service
-                ILocation origin = service.getPickupLocation();
-                ILocation destination = service.getDropoffLocation();
+                ILocation origin = currentService.getPickupLocation();
+                ILocation destination = currentService.getDropoffLocation();
 
                 // for multiple services aka shared services
                 if (this.service.size() > 1) {
 
                     origin = this.service.get(0).getPickupLocation();
-                    ILocation secondDropOff;
-
-                    /*if(ApplicationLibrary.distance(this.service.get(0).getDropoffLocation(),getLocation()) > ApplicationLibrary.distance(getService().getDropoffLocation(),getLocation())) {
-                        destination = getService().getDropoffLocation();
-                        secondDropOff = this.service.get(0).getDropoffLocation();
-                    } else {
-                        secondDropOff = getService().getDropoffLocation();
-                        destination = this.service.get(0).getDropoffLocation();
-                    }*/
-
-                    //destination = closest(this.service.get(0).getDropoffLocation(), service.getDropoffLocation());
                     destination = this.service.get(0).getDropoffLocation();
-                    ILocation second = service.getPickupLocation();
-                    //ILocation secondDropOff = farthest(this.service.get(0).getDropoffLocation(), service.getDropoffLocation());
-                    secondDropOff = service.getDropoffLocation();
+                    System.out.println(destination.toString() + "DESTINATION SHOULD BE OLD");
+
+                    ILocation secondDropOff;
+                    ILocation secondPickUp = currentService.getPickupLocation();
+                    secondDropOff = currentService.getDropoffLocation();
 
                     // notify when vehicle arrives at secondary pickup (current service pickup location)
-                    if (ApplicationLibrary.isSameLocation(this.location, second)) {
+                    if (ApplicationLibrary.isSameLocation(this.location, secondPickUp)) {
 
                         notifyArrivalAtSecondaryPickUpLocation();
 
                     } else if(ApplicationLibrary.isSameLocation(this.location, secondDropOff)) {
+
                         notifyArrivalAtSecondaryDropOffLocation();
+
                     }
                 }
 
@@ -352,7 +348,7 @@ public abstract class Vehicle implements IVehicle {
         return route;
     } // method setDrivingRouteToDestination
 
-    private ILocation closest(ILocation dropOff1, ILocation dropOff2) {
+    private ILocation closestDropOff(ILocation dropOff1, ILocation dropOff2) {
         ILocation closest = dropOff1;
         int distance1 = ApplicationLibrary.distance(getLocation(),dropOff1);
         int distance2 = ApplicationLibrary.distance(getLocation(),dropOff2);
@@ -364,7 +360,7 @@ public abstract class Vehicle implements IVehicle {
         return closest;
     }
 
-    private ILocation farthest(ILocation dropOff1, ILocation dropOff2) {
+    private ILocation farthestDropOff(ILocation dropOff1, ILocation dropOff2) {
         ILocation closest = dropOff1;
         int distance1 = ApplicationLibrary.distance(getLocation(),dropOff1);
         int distance2 = ApplicationLibrary.distance(getLocation(),dropOff2);
