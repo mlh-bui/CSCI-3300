@@ -1,5 +1,8 @@
-// V.2 Project: Taxify
-// Marissa Bui - CSCI 3300 - 2/17
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class User implements IUser {
     /** User ID */
@@ -19,6 +22,9 @@ public class User implements IUser {
 
     /** User location to find location relative to a vehicle */
     private ILocation location;
+
+    /** User route to Micro Vehicles */ // COULD BE WRONG???
+    private List<ILocation> route;
 
     /** Basic constructor */
     public User(int id, String firstName, String lastName, ILocation location) {
@@ -45,13 +51,18 @@ public class User implements IUser {
         return this.lastName;
     }
 
+    @Override
+    public boolean hasService() {
+        return this.service;
+    }
+
     public ILocation getLocation() {
         return location;
     }
 
     @Override
-    public boolean getService() {
-        return this.service;
+    public void setLocation(ILocation location) {
+        this.location = location;
     }
 
     @Override
@@ -65,9 +76,25 @@ public class User implements IUser {
         this.company.provideService(this.id);
     }
 
-    public boolean acceptShareRide() {
-        return ApplicationLibrary.rand() % 2 == 0 ? true : false;
+    public void requestSharedService() {
+        // requests service 50% of the time
+        if(ApplicationLibrary.rand() % 2 == 0) {
+            this.company.provideSharedService(this.id);
+        }
     }
+
+    @Override
+    public void cancelRide() {
+        if(ApplicationLibrary.rand() % 5 == 0) {
+            this.company.cancelService(this.id);
+        }
+    }
+
+    public void makeReservation() {
+        this.company.provideMicroService(this.id);
+    }
+
+
 
     /**
      * Rate of the service using stars from 1 to 5
@@ -90,4 +117,14 @@ public class User implements IUser {
     public void setCompany(ITaxiCompany company) {
         this.company = company;
     }
+
+    public List<ILocation> getRoute() {
+        return route;
+    }
+
+    public void setRoute(List<ILocation> route) {
+        this.route = route;
+    }
+
+
 } // class User

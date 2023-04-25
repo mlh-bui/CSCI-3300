@@ -94,6 +94,7 @@ public class TestProgram {
                app.requestSharedService();
             } else {
                 app.cancelService();
+                app.requestSharedService();
             }
 
         } while (app.getTotalServices() != 0);

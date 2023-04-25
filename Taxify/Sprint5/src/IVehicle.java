@@ -1,20 +1,26 @@
+import java.util.List;
+
 public interface IVehicle {
 
-    public int getId();
-    public ILocation getLocation();
-    public ILocation getDestination();
-    public IService getService();
-    public IStatistics getStatistics();
-    public void setCompany(ITaxiCompany company);
-    public void pickService(IService service);
-    public void startService();
-    public void endService();
-    public void notifyArrivalAtPickupLocation();
-    public void notifyArrivalAtDropoffLocation();
-    public boolean isFree();
-    public void move();
-    public int calculateCost();
-    public String showDrivingRoute();
-    public String toString();
+    int getId();
+    ILocation getLocation();
+    ILocation getDestination();
+    IStatistics getStatistics();
+    VehicleStatus getStatus();
+    void setService(List<IService> service);
+    void setCompany(ITaxiCompany company);
+    void pickService(IService service);
+    void startService();
+    void endService();
+    void notifyArrivalAtPickupLocation();
+    void notifyArrivalAtDropOffLocation();
+    boolean isFree();
+    void move();
+    int calculateCost();
+    String showDrivingRoute();
+    String toString();
+    IService getService();
+    List<IService> getServices();
+    void pickMicroService(IService service);
 
 }

@@ -122,10 +122,10 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
             ILocation currentLocation = this.vehicles.get(vehicleIndex).getLocation();
             ILocation origin = this.users.get(userIndex).getLocation();
-            ILocation destination = ApplicationLibrary.randomLocation(currentLocation); // destination = original destination
+            ILocation destination = ApplicationLibrary.randomLocation(origin); // destination = original destination
 
             // change the origin of the user if they are at the destination or current location
-            while (ApplicationLibrary.isSameLocation(origin,currentLocation)) {
+            while (ApplicationLibrary.sameLocation(origin, currentLocation)) {
                 origin = ApplicationLibrary.randomLocation();
             }
 
@@ -197,7 +197,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
         this.totalServices--;
 
-        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " drops off SECOND user " + user);
+        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " drops off second user " + user);
     }
 
     /** Method to add an observer */
@@ -243,28 +243,8 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
      * @return int, free vehicle index or -1 otherwise
      */
     private int findFreeVehicle() {
-        // MIGHT CHANGE, Keep for testing
-        // Pros: returned free vehicle index
-        // Cons: technically not guaranteed to go through every vehicle in the list
-        int index;
-        int tests = 0;
+        // MIGHT CHANGE
 
-        do {
-            index = ApplicationLibrary.rand(vehicles.size());
-            tests++;
-        }
-        // continue searching for a free vehicle
-        while(!vehicles.get(index).isFree() && tests <= vehicles.size() * 5);
-
-        // if no free vehicle is found after 50 tests safe to say none are free
-        if(tests == vehicles.size() * 5) {
-            return -1;
-        }
-
-        return index;
-
-        // Old implementation -- works just fine
-        /*
         if(ApplicationLibrary.rand() % 2 == 0) {
             for(IVehicle v : this.vehicles) {
                 if(v.isFree())
@@ -276,8 +256,8 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
                 if(this.vehicles.get(i).isFree())
                     return i;
             }
-        }*/
-        //return -1;
+        }
+        return -1;
     } // method findFreeVehicle
 
     /**

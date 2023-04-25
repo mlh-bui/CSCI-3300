@@ -1,6 +1,9 @@
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
+
 public interface ISubject {
 
-    public void addObserver(IObserver observer);
-    public void notifyObserver(String message);
+    void addObserver(IObserver observer);
+    void notifyObserver(String message);
 
-}
+} // interface ISubject

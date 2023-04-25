@@ -1,5 +1,5 @@
-// V.2 Project: Taxify
-// Marissa Bui - CSCI 3300 - 2/17
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
 
 public class Statistics implements IStatistics {
     /**

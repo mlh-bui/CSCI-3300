@@ -7,21 +7,22 @@ public class TestProgram {
         List<IUser> users = new ArrayList<>();
         List<IVehicle> vehicles = new ArrayList<>();
 
-        IUser u1 = new User(1,"M","B");
-        IUser u2 = new User(2,"G","A");
-        IUser u3 = new User(3,"H","W");
-        IUser u4 = new User(4,"N","Q");
-        IUser u5 = new User(5,"W","R");
-        IUser u6 = new User(6,"Q","E");
-        IUser u7 = new User(7,"D","Y");
-        IUser u8 = new User(8,"A","T");
-        IUser u9 = new User(9,"L","U");
-        IUser u10 = new User(10,"P","I");
-        IUser u11 = new User(11,"I","O");
-        IUser u12 = new User(12,"U","P");
-        IUser u13 = new User(13,"X","L");
-        IUser u14 = new User(14,"C","K");
-        IUser u15 = new User(15,"J","N");
+
+        IUser u1 = new User(1,"M","B", ApplicationLibrary.randomLocation());
+        IUser u2 = new User(2,"G","A",ApplicationLibrary.randomLocation());
+        IUser u3 = new User(3,"H","W",ApplicationLibrary.randomLocation());
+        IUser u4 = new User(4,"N","Q",ApplicationLibrary.randomLocation());
+        IUser u5 = new User(5,"W","R",ApplicationLibrary.randomLocation());
+        IUser u6 = new User(6,"Q","E",ApplicationLibrary.randomLocation());
+        IUser u7 = new User(7,"D","Y",ApplicationLibrary.randomLocation());
+        IUser u8 = new User(8,"A","T",ApplicationLibrary.randomLocation());
+        IUser u9 = new User(9,"L","U",ApplicationLibrary.randomLocation());
+        IUser u10 = new User(10,"P","I",ApplicationLibrary.randomLocation());
+        IUser u11 = new User(11,"I","O",ApplicationLibrary.randomLocation());
+        IUser u12 = new User(12,"U","P",ApplicationLibrary.randomLocation());
+        IUser u13 = new User(13,"X","L",ApplicationLibrary.randomLocation());
+        IUser u14 = new User(14,"C","K",ApplicationLibrary.randomLocation());
+        IUser u15 = new User(15,"J","N",ApplicationLibrary.randomLocation());
 
         users.add(u1);
         users.add(u2);
@@ -51,6 +52,14 @@ public class TestProgram {
         IVehicle v9 = new Shuttle(9, ApplicationLibrary.randomLocation());
         IVehicle v10 = new Taxi(10, ApplicationLibrary.randomLocation());
 
+
+        MicroVehicle v11 = new Bike(11,ApplicationLibrary.randomLocation());
+        MicroVehicle v12 = new Bike(12,ApplicationLibrary.randomLocation());
+        MicroVehicle v13 = new Scooter(13, ApplicationLibrary.randomLocation());
+        MicroVehicle v14 = new Scooter(14, ApplicationLibrary.randomLocation());
+        MicroVehicle v15 = new Bike(15, ApplicationLibrary.randomLocation());
+
+
         vehicles.add(v1);
         vehicles.add(v2);
         vehicles.add(v3);
@@ -61,6 +70,12 @@ public class TestProgram {
         vehicles.add(v8);
         vehicles.add(v9);
         vehicles.add(v10);
+        vehicles.add(v11);
+        vehicles.add(v12);
+        vehicles.add(v13);
+        vehicles.add(v14);
+        vehicles.add(v15);
+
 
         // Instantiate the Taxi company and the Application simulator
         TaxiCompany taxify = new TaxiCompany("Taxify", users, vehicles);
@@ -76,8 +91,6 @@ public class TestProgram {
         for(int i = 0; i < 5; i++) {
             app.requestService();
         }
-        // app.requestService();
-
         do {
             // we show the status of the simulation
 
@@ -89,7 +102,11 @@ public class TestProgram {
 
 
             if (ApplicationLibrary.rand() % 4 == 0) {
-                app.requestService();
+               app.requestService();
+               app.requestSharedService();
+            } else {
+                app.cancelService();
+                app.requestMicroService();
             }
 
         } while (app.getTotalServices() != 0);
@@ -97,7 +114,8 @@ public class TestProgram {
         // after the end of the service show statistics
         app.showStatistics();
 
-
     } // method main
+
+
 
 } // class TestProgram

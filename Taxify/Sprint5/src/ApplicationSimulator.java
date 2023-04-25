@@ -1,3 +1,6 @@
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
+
 import java.util.List;
 
 public class ApplicationSimulator implements IApplicationSimulator, IObserver {
@@ -25,9 +28,23 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
         System.out.println("\n" + this.company.getName() + " status \n");
 
-        for (int i=0; i<this.vehicles.size(); i++) {
-            System.out.println(this.vehicles.get(i).toString());
+        // unnecessary separation, can print all in a row but visually like better (MIGHT CHANGE)
+        for (IVehicle vehicle : this.vehicles) {
+            if(!(vehicle instanceof MicroVehicle)) {
+                System.out.println(vehicle.toString());
+            }
         }
+
+        System.out.println();
+
+        for(IVehicle microVehicle : this.vehicles) {
+            if(microVehicle instanceof MicroVehicle) {
+                System.out.println(microVehicle.toString());
+            }
+        }
+
+        System.out.println();
+
     } // method show
 
     /**
@@ -61,21 +78,51 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
     /** Simulates user request for a service */
     @Override
     public void requestService() {
-        // finds a "free" user and requests a service to the Taxi Company
-        int index;
-
-        do {
-            index = ApplicationLibrary.rand(users.size());
-        }
-        // continue searching while user at index has a service
-        while(users.get(index).getService());
+        // gets free user
+        IUser user = findFreeUser();
 
         // request service if the user does not have one yet
-        if(!users.get(index).getService()) {
-            users.get(index).requestService();
+        if(!user.hasService()) {
+            user.requestService();
         }
 
     } // method requestService
+
+    /** Simulates user request for a shared service */
+    public void requestSharedService() {
+        // gets free user
+        IUser user = findFreeUser();
+
+        // request service if the user does not have one yet
+        if(!user.hasService()) {
+            user.requestSharedService();
+        }
+
+    } // method requestService
+
+    public void requestMicroService() {
+        IUser user = findFreeUser();
+
+        if (!user.hasService()) {
+            user.makeReservation();
+        }
+    }
+
+    /** Simulates a user request to a cancel a service */
+    public void cancelService() {
+        int index = -1;
+
+        for(int i = 0; i < this.vehicles.size(); i++) {
+            if(vehicles.get(i).getStatus() == VehicleStatus.PICKUP) {
+                index = i;
+            }
+        }
+
+        if(index != -1 && users.get(index).hasService()) {
+            this.users.get(index).cancelRide();
+        }
+
+    } // method cancelService
 
 
     /** Returns total services for company */
@@ -89,4 +136,16 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
     public void updateObserver(String message) {
         System.out.println(message);
     }
+
+    private IUser findFreeUser() {
+        int index;
+
+        do {
+            index = ApplicationLibrary.rand(users.size());
+        }
+        // continue searching while user at index has a service
+        while(users.get(index).hasService());
+
+        return users.get(index); // return a user without a service
+    } // method findFreeUser
 }

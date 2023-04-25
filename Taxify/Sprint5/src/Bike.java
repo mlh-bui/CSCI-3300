@@ -1,18 +1,16 @@
-public class Bike extends Vehicle {
+public class Bike extends MicroVehicle {
 
-    /** Basic Constructor for Bike */
+
     public Bike(int id, ILocation location) {
         super(id, location);
     }
 
-
-    @Override
     public int calculateCost() {
         return (int) (super.calculateCost() * 0.50);
     }
 
-    @Override
     public String toString() {
         return "Bike " + super.toString();
-    }
-}
+    } // method toString
+
+} // class Bike

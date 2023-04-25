@@ -1,4 +1,3 @@
-// V.2 Project: Taxify
 // Marissa Bui - CSCI 3300 - 2/17
 
 public class Taxi extends Vehicle {

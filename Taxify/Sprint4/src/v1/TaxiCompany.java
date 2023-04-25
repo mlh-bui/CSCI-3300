@@ -125,7 +125,8 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
             ILocation destination = this.vehicles.get(vehicleIndex).getDestination(); // destination = original destination
 
             // change the origin of the user if they are at the destination or current location
-            while (ApplicationLibrary.isSameLocation(origin,destination) || ApplicationLibrary.isSameLocation(origin,currentLocation)) {
+            while (ApplicationLibrary.isSameLocation(origin,destination)
+                    || ApplicationLibrary.isSameLocation(origin,currentLocation)) {
                 origin = ApplicationLibrary.randomLocation();
             }
 
@@ -159,7 +160,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
     /** Notify observer when a vehicle arrive at second user's pick up location */
     public void arrivedAtSecondaryPickupLocation(IVehicle vehicle) {
-        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads SECOND user " + vehicle.getService().getUser().getId());
+        notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " loads second user " + vehicle.getService().getUser().getId());
     }
 
     /**
@@ -199,7 +200,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
     public void notifyObserver(String message) {
         this.observer.updateObserver(message);
     }
-
+/*
     // NEW CHANGES IVE MADE (MIA)
    public void cancelService(IVehicle vehicle) {
         if (vehicle.getStatus() == VehicleStatus.PICKUP) {
@@ -223,7 +224,32 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
             this.totalServices--;
         }
     }
-    // cancelService
+    // cancelService*/
+
+    public boolean cancelService(int user) {
+        int userIndex = indexOfUserId(user);
+
+        // find the user's vehicle
+        for(IVehicle v: vehicles) {
+            // if the vehicle has a service & it's user matches the user asking for a cancellation
+            if(v.getStatus() == VehicleStatus.PICKUP && users.get(userIndex) == v.getService().getUser()) {
+
+                v.endService();
+
+                this.users.get(userIndex).setService(false);
+
+                // update the counter of services
+
+                this.totalServices--;
+
+                notifyObserver(String.format("%-8s",v.getClass().getSimpleName()) + v.getId() + " is free after user " + user + " cancelled the ride");
+
+                return true;
+            }
+        }
+        return false;
+
+    } // cancelService
 
     /**
      * Gets the index of a random free vehicle in vehicle list

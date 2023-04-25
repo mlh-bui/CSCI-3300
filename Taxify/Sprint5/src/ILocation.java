@@ -1,6 +1,9 @@
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
+
 public interface ILocation {
-    public int getX();
-    public int getY();
-    public String toString();
+    int getX();
+    int getY();
+    String toString();
 
 } // interface ILocation

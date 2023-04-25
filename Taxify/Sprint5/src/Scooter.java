@@ -1,4 +1,4 @@
-public class Scooter extends Vehicle {
+public class Scooter extends MicroVehicle {
 
     /** Basic Constructor for Scooter */
     public Scooter(int id, ILocation location) {
@@ -13,5 +13,6 @@ public class Scooter extends Vehicle {
     @Override
     public String toString() {
         return "Scooter " + super.toString();
-    }
+    } // method toString
+
 }

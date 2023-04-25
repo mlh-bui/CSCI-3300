@@ -1,3 +1,5 @@
+// Marissa Bui - CSCI 3300 - 2/17
+
 public class Shuttle extends Vehicle {
 
     /** Basic Constructor for Shuttle */

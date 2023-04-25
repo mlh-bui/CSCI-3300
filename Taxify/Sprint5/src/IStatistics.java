@@ -1,14 +1,17 @@
+// Sprint 4 Project: Taxify
+// Marissa Bui - CSCI 3300
+
 public interface IStatistics {
 
-    public int getServices();
-    public int getReviews();
-    public double getStars();
-    public int getDistance();
-    public int getBilling();
-    public void updateServices();
-    public void updateReviews();
-    public void updateStars(int stars);
-    public void updateDistance(int distance);
-    public void updateBilling(int billing);
+    int getServices();
+    int getReviews();
+    double getStars();
+    int getDistance();
+    int getBilling();
+    void updateServices();
+    void updateReviews();
+    void updateStars(int stars);
+    void updateDistance(int distance);
+    void updateBilling(int billing);
 
 } // interface IStatistics

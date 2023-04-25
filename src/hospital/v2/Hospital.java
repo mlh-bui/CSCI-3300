@@ -48,7 +48,7 @@ public class Hospital implements IHospital {
     }
 
     public String queryEmployees(String category) {
-        // list employees based off category
+        // listmployees based off category
         System.out.printf(this.getWeb() + "\t\t\tEmployees: %s\n", category);
         String s = "";
         for(IEmployee e: this.employees){

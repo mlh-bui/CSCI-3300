@@ -41,7 +41,7 @@ public class ApplicationLibrary {
         return destination;
     }
 
-    public static boolean isSameLocation(ILocation l1, ILocation l2) {
+    public static boolean sameLocation(ILocation l1, ILocation l2) {
         return l1.getX() == l2.getX() && l1.getY() == l2.getY();
     }
 

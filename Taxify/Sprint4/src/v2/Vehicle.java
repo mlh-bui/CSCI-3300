@@ -222,18 +222,17 @@ public abstract class Vehicle implements IVehicle {
 
                     origin = this.service.get(0).getPickupLocation();
                     destination = this.service.get(0).getDropoffLocation();
-                    System.out.println(destination.toString() + "DESTINATION SHOULD BE OLD");
 
                     ILocation secondDropOff;
                     ILocation secondPickUp = currentService.getPickupLocation();
                     secondDropOff = currentService.getDropoffLocation();
 
                     // notify when vehicle arrives at secondary pickup (current service pickup location)
-                    if (ApplicationLibrary.isSameLocation(this.location, secondPickUp)) {
+                    if (ApplicationLibrary.sameLocation(this.location, secondPickUp)) {
 
                         notifyArrivalAtSecondaryPickUpLocation();
 
-                    } else if(ApplicationLibrary.isSameLocation(this.location, secondDropOff)) {
+                    } else if(ApplicationLibrary.sameLocation(this.location, secondDropOff)) {
 
                         notifyArrivalAtSecondaryDropOffLocation();
 
@@ -241,11 +240,11 @@ public abstract class Vehicle implements IVehicle {
                 }
 
                 // notify when vehicle arrives at pickup or destination
-                if (ApplicationLibrary.isSameLocation(this.location,origin)) {
+                if (ApplicationLibrary.sameLocation(this.location,origin)) {
 
                     notifyArrivalAtPickupLocation();
 
-                } else if (ApplicationLibrary.isSameLocation(this.location,destination)) {
+                } else if (ApplicationLibrary.sameLocation(this.location,destination)) {
 
                     notifyArrivalAtDropOffLocation();
 
@@ -307,7 +306,7 @@ public abstract class Vehicle implements IVehicle {
         } else if (this.status == VehicleStatus.SHARED_SERVICE) {
             s = " in shared service";
         } else if (this.status == VehicleStatus.SERVICE) {
-            s = " in regular service " + this.getService().getUser().getId();
+            s = " in regular service";
         }
         return this.id + " at " + this.location + " driving to " + this.destination + s;
 

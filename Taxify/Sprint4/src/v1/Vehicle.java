@@ -160,13 +160,17 @@ public abstract class Vehicle implements IVehicle {
 
     } // method notifyArrivalAtPickupLocation
 
-    // NEWLY ADDED 4/9
+    /**
+     * Notify the company when the vehicle arrives at secondary pick-up
+     * Starts ride-share service
+     */
     @Override
     public void notifyArrivalAtSecondaryPickUpLocation() {
+        // notify the company that the vehicle is at the Second pickup location and start a shared service
+
         this.company.arrivedAtSecondaryPickupLocation(this);
         this.startSharedService();
-
-    }
+    } // method notifyArrivalAtSecondaryPickUpLocation
 
     /**
      * When the Vehicle arrives at drop-off location the company is notified
@@ -289,9 +293,9 @@ public abstract class Vehicle implements IVehicle {
         } else if (this.status == VehicleStatus.PICKUP) {
             s = " to pick up user " + this.getService().getUser().getId();
         } else if (this.status == VehicleStatus.SHARED_SERVICE) {
-            s = " in shared service" + " Distance: " + this.getService().calculateDistance();
+            s = " in shared service";
         } else if (this.status == VehicleStatus.SERVICE) {
-            s = " in regular service " + this.getService().getUser().getId();
+            s = " in regular service";
         }
         return this.id + " at " + this.location + " driving to " + this.destination + s;
 

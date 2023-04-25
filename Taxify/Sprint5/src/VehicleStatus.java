@@ -1,5 +1,5 @@
 public enum VehicleStatus {
 
-    FREE, PICKUP, SERVICE, BOOKED // BOOKED added for scooter / bike status
+    FREE, PICKUP, SERVICE, SHARED_SERVICE
 
 }
