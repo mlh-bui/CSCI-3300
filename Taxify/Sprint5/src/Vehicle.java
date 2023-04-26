@@ -4,7 +4,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Vehicle implements IVehicle {
+public abstract class Vehicle implements IVehicle, ISharedVehicle {
     /** Vehicle Id */
     private int id;
 
@@ -16,9 +16,6 @@ public abstract class Vehicle implements IVehicle {
 
     /** Vehicle status */
     private VehicleStatus status;
-
-    /** Micro Vehicle status (Scooters & Bikes) */
-    private MicroVehicleStatus microStatus;
 
     /** Location */
     private ILocation location;
@@ -90,6 +87,7 @@ public abstract class Vehicle implements IVehicle {
         this.destination = destination;
     }
 
+    // ADD TO INTERFACE
     public List<ILocation> getRoute() {
         return route;
     }
@@ -114,14 +112,15 @@ public abstract class Vehicle implements IVehicle {
         this.status = VehicleStatus.PICKUP;
     } // method pickService
 
+    /*
     public void pickMicroService(IService service) {
         this.service.add(service);
         this.destination = service.getPickupLocation();
-        this.route = setDrivingRouteToDestination(this.location, this.destination);
+        this.route = setDrivingRouteToDestination(this.location, this.destination); // user's moving to vehicle
         this.microStatus = MicroVehicleStatus.BOOKED;
-    }
+    }*/
 
-    public void startMicroService() {
+    /*public void startMicroService() {
         this.destination = this.service.get(0).getDropoffLocation();
         this.route = setDrivingRouteToDestination(this.location, this.destination);
         this.microStatus = MicroVehicleStatus.SERVICE;
@@ -138,7 +137,7 @@ public abstract class Vehicle implements IVehicle {
 
         this.service = null;
         this.microStatus = MicroVehicleStatus.FREE;
-    }
+    }*/
 
     /**
      * Service to drop-off location
@@ -202,11 +201,7 @@ public abstract class Vehicle implements IVehicle {
         // notify the company that the vehicle is at the pickup location and start the service
 
         this.company.arrivedAtPickupLocation(this);
-        if(this instanceof MicroVehicle) {
-            this.startMicroService();
-        } else {
-            this.startService();
-        }
+        this.startService();
 
     } // method notifyArrivalAtPickupLocation
 
@@ -222,11 +217,8 @@ public abstract class Vehicle implements IVehicle {
     @Override
     public void notifyArrivalAtDropOffLocation() {
         this.company.arrivedAtDropOffLocation(this);
-        if(this instanceof MicroVehicle) {
-            endMicroService();
-        } else {
-            endService();
-        }
+        endService();
+
     } // method notifyArrivalAtDropOffLocation
 
     public void notifyArrivalAtSecondaryDropOffLocation() {
@@ -241,7 +233,7 @@ public abstract class Vehicle implements IVehicle {
      */
     @Override
     public boolean isFree() {
-        return this.status == VehicleStatus.FREE || this.microStatus == MicroVehicleStatus.FREE;
+        return this.status == VehicleStatus.FREE;
     }
 
     /** Simulates a vehicle moving from location to location */
@@ -251,52 +243,28 @@ public abstract class Vehicle implements IVehicle {
         this.route.remove(0);
 
         if (this.route.isEmpty()) {
-            if (this.service == null || this.service.isEmpty() ) {
-                // the vehicle continues its random drive
+            if (this.service == null) {
+                // the vehicle continues its random route
 
                 this.destination = ApplicationLibrary.randomLocation(this.location);
                 this.route = setDrivingRouteToDestination(this.location, this.destination);
             }
-            // if there is more than one service for the vehicle
             else {
-                IService currentService = this.getService();
+                // checks if the vehicle has arrived to a pickup or drop off location
 
-                // get origin and destination of current service
-                ILocation origin = currentService.getPickupLocation();
-                ILocation destination = currentService.getDropoffLocation();
+                ILocation origin = this.service.getPickupLocation();
+                ILocation destination = this.service.getDropoffLocation();
 
-                // for multiple services aka shared services
-                if (this.service.size() > 1) {
-
-                    origin = this.service.get(0).getPickupLocation();
-                    destination = this.service.get(0).getDropoffLocation();
-
-                    ILocation secondDropOff;
-                    ILocation secondPickUp = currentService.getPickupLocation();
-                    secondDropOff = currentService.getDropoffLocation();
-
-                    // notify when vehicle arrives at secondary pickup (current service pickup location)
-                    if (ApplicationLibrary.isSameLocation(this.location, secondPickUp)) {
-
-                        notifyArrivalAtSecondaryPickUpLocation();
-
-                    } else if(ApplicationLibrary.isSameLocation(this.location, secondDropOff)) {
-
-                        notifyArrivalAtSecondaryDropOffLocation();
-
-                    }
-                }
-
-                // notify when vehicle arrives at pickup or destination
-                if (ApplicationLibrary.isSameLocation(this.location,origin)) {
+                if (this.location.getX() == origin.getX() && this.location.getY() == origin.getY()) {
 
                     notifyArrivalAtPickupLocation();
 
-                } else if (ApplicationLibrary.isSameLocation(this.location,destination)) {
+                } else if (this.location.getX() == destination.getX() && this.location.getY() == destination.getY()) {
 
-                    notifyArrivalAtDropOffLocation();
+                    notifyArrivalAtDropoffLocation();
 
                 }
+
             }
         }
     } // method move
@@ -421,10 +389,8 @@ public abstract class Vehicle implements IVehicle {
     }
      */
 
-    public void moveUser() {
-        if (microStatus == MicroVehicleStatus.BOOKED) {
-            getServices().get(0).getUser().setRoute(setDrivingRouteToDestination(service.get(0).getUser().getLocation(), service.get(0).getPickupLocation()));
-        }
+    @Override
+    public void setStatistics(IStatistics statistics) {
+        this.statistics = statistics;
     }
-
 } // class Vehicle

@@ -21,6 +21,6 @@ public interface IVehicle {
     String toString();
     IService getService();
     List<IService> getServices();
-    void pickMicroService(IService service);
+    void setStatistics(IStatistics statistics);
 
 }

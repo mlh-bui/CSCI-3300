@@ -11,7 +11,7 @@ public interface IUser {
     boolean hasService();
     ILocation getLocation();
     void setLocation(ILocation location) ;
-    void setService(boolean service);
+    void setHasService(boolean hasService);
     void requestService();
     void requestSharedService();
     void rateService(IService service);
@@ -21,6 +21,8 @@ public interface IUser {
 
     void cancelRide();
     void makeReservation();
-    void setRoute(List<ILocation> route);
+
+    void move();
+    String showUserRoute();
 
 } // interface IUser

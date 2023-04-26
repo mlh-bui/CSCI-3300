@@ -43,6 +43,10 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
             }
         }
 
+        for(IUser user: this.users) {
+            System.out.println(user.toString());
+        }
+
         System.out.println();
 
     } // method show
@@ -72,6 +76,12 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
     public void update() {
         for (IVehicle vehicle : this.vehicles) {
             vehicle.move();
+        }
+
+        for(IUser user : this.users) {
+
+            user.move();
+
         }
     } // method update
 

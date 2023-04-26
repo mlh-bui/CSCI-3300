@@ -16,5 +16,7 @@ public interface ITaxiCompany {
     boolean cancelService(int user);
     boolean provideMicroService(int user);
 
+    void userArrivesAtMicroVehicleLocation(IUser user);
+
 
 } // interface ITaxiCompany

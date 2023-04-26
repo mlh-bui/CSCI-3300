@@ -66,10 +66,13 @@ public class TestProgram {
         vehicles.add(v4);
         vehicles.add(v5);
         vehicles.add(v6);
+        /*
         vehicles.add(v7);
         vehicles.add(v8);
         vehicles.add(v9);
         vehicles.add(v10);
+         */
+
         vehicles.add(v11);
         vehicles.add(v12);
         vehicles.add(v13);
@@ -102,10 +105,10 @@ public class TestProgram {
 
 
             if (ApplicationLibrary.rand() % 4 == 0) {
-               app.requestService();
-               app.requestSharedService();
+               //app.requestService();
+               //app.requestSharedService();
             } else {
-                app.cancelService();
+                //app.cancelService();
                 app.requestMicroService();
             }
 

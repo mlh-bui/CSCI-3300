@@ -58,8 +58,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
     @Override
     public boolean provideService(int user) {
         int userIndex = indexOfUserId(user);
-        int vehicleIndex = findFreeVehicle()
-                ;
+        int vehicleIndex = findFreeVehicle();
 
         // create an arrayList of service for the vehicle
         if(vehicles.get(vehicleIndex).getService() == null) {
@@ -81,7 +80,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
             // update the user status
 
-            this.users.get(userIndex).setService(true);
+            this.users.get(userIndex).setHasService(true);
 
             // create a service with the user, the pickup and the drop-off location
 
@@ -129,7 +128,9 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
                 origin = ApplicationLibrary.randomLocation();
             }
 
-            this.users.get(userIndex).setService(true);
+            this.users.get(userIndex).setHasService(true);
+
+
 
             Service service = new Service(this.users.get(userIndex), origin, destination);    // create shared service
 
@@ -161,11 +162,11 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
             ILocation origin = this.users.get(userIndex).getLocation();
             ILocation destination = ApplicationLibrary.randomLocation(origin); // destination = micro vehicle's location
 
-            this.users.get(userIndex).setService(true);
+            this.users.get(userIndex).setHasService(true);
 
             Service service = new Service(this.users.get(userIndex), origin, destination);    // create shared service
 
-            this.vehicles.get(vehicleIndex).pickMicroService(service);
+            this.vehicles.get(vehicleIndex).pickService(service);
 
             notifyObserver("User " + this.users.get(userIndex).getId() + " requests a Micro-mobility service from " + service.toString() + ", the user reserves " +
                     this.vehicles.get(vehicleIndex).getClass().getSimpleName() + " " + this.vehicles.get(vehicleIndex).getId() + " at location " +
@@ -178,9 +179,11 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
             return true;
         }
 
-
-
         return false;
+    }
+
+    public void userArrivesAtMicroVehicleLocation(IUser user) {
+        notifyObserver(String.format("%-8s", user.getClass().getSimpleName() + user.getId() + " arrives at Micro vehicle"));
     }
 
     /** Notify observer when a vehicle arrives at pick-up location */
@@ -207,7 +210,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
 
         this.users.get(userIndex).rateService(vehicle.getServices().get(0));
-        this.users.get(userIndex).setService(false);
+        this.users.get(userIndex).setHasService(false);
 
         // update the counter of services
 
@@ -223,7 +226,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
         int userIndex = indexOfUserId(user);
 
         this.users.get(userIndex).rateService(vehicle.getService());
-        this.users.get(userIndex).setService(false);
+        this.users.get(userIndex).setHasService(false);
 
         // update the counter of services
 
@@ -254,7 +257,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
                 v.endService();
 
-                this.users.get(userIndex).setService(false);
+                this.users.get(userIndex).setHasService(false);
 
                 // update the counter of services
 
@@ -281,13 +284,13 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
                 if(v.isFree() && !(v instanceof MicroVehicle))
                     return this.vehicles.indexOf(v);     // returns the index of the vehicle v in the list
             }
-        }
-        else {
+        } else {
             for(int i = this.vehicles.size() -1 ; i >=0; i--) {
                 if(this.vehicles.get(i).isFree() && !(this.vehicles.get(i) instanceof MicroVehicle))
                     return i;
             }
         }
+
         return -1;
     } // method findFreeVehicle
 
