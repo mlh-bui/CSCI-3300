@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public interface IVehicle {
@@ -7,7 +8,6 @@ public interface IVehicle {
     ILocation getDestination();
     IStatistics getStatistics();
     VehicleStatus getStatus();
-    void setService(List<IService> service);
     void setCompany(ITaxiCompany company);
     void pickService(IService service);
     void startService();
@@ -20,7 +20,5 @@ public interface IVehicle {
     String showDrivingRoute();
     String toString();
     IService getService();
-    List<IService> getServices();
     void setStatistics(IStatistics statistics);
-
 }

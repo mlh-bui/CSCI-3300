@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class MicroVehicle implements IMicroVehicle  {
+public class MicroVehicle implements IVehicle  {
     /** Vehicle Id */
     private int id;
 
@@ -12,7 +12,7 @@ public class MicroVehicle implements IMicroVehicle  {
     private IService service;
 
     /** Vehicle status */
-    private MicroVehicleStatus status;
+    private VehicleStatus status;
 
     /** Location */
     private ILocation location;
@@ -31,7 +31,7 @@ public class MicroVehicle implements IMicroVehicle  {
     public MicroVehicle(int id, ILocation location) {
         this.id = id;
         this.service = null;
-        this.status = MicroVehicleStatus.FREE;
+        this.status = VehicleStatus.FREE;
         this.location = location;
         this.destination = null;
         this.statistics = new Statistics();
@@ -58,7 +58,7 @@ public class MicroVehicle implements IMicroVehicle  {
     }
 
     @Override
-    public MicroVehicleStatus getMicroStatus() {
+    public VehicleStatus getStatus() {
         return this.status;
     }
 
@@ -68,16 +68,15 @@ public class MicroVehicle implements IMicroVehicle  {
     }
 
     @Override
-    public void bookedService(IUser user) {
-        if (this.service.getUser() == user) {   // WHY? Because the user is the one setting the service
-            this.status = MicroVehicleStatus.BOOKED;
-        }
+    public void pickService(IService service) {
+        this.status = VehicleStatus.BOOKED;
+        this.service = service;
     }
 
     public void startService() {
         this.destination = this.service.getDropoffLocation();
         this.route = setDrivingRouteToDestination(this.location, this.destination);
-        this.status = MicroVehicleStatus.SERVICE;
+        this.status = VehicleStatus.SERVICE;
     }
 
     public void endService() {
@@ -95,45 +94,54 @@ public class MicroVehicle implements IMicroVehicle  {
         }
 
         // set service to null, and status to "free"
+        this.service.getUser().setRoute(setDrivingRouteToDestination(this.location,this.destination));
 
         this.service = null;
         this.destination = ApplicationLibrary.randomLocation(this.location);
-        this.route = setDrivingRouteToDestination(this.location, this.destination);
-        this.status = MicroVehicleStatus.FREE;
+        this.status = VehicleStatus.FREE;
     }
 
     @Override
-    public void notifyUserArrivalAtPickupLocation( ) {
-        // this.company.arrivedAtPickupLocation(this); PROBLEMS NOW THAT NO LONGER IVEHICLE
+    public void notifyArrivalAtPickupLocation( ) {
+        this.company.userArrivesAtMicroVehicleLocation(this.service.getUser());
         this.startService();
     }
 
     @Override
     public void notifyArrivalAtDropOffLocation() {
-        // this.company.arrivedAtDropOffLocation(this);
-        endService();
+        this.company.arrivedAtDropOffLocation(this);
+        this.endService();
+    }
+
+    @Override
+    public boolean isFree() {
+        return this.status == VehicleStatus.FREE;
     }
 
     @Override
     public void move() {
-        this.location = this.route.get(0);
-        this.route.remove(0);
-        if(this.status != MicroVehicleStatus.FREE) {
-            if (this.route != null) {
-                // get origin and destination of current service
-                ILocation origin = getLocation();
-                ILocation destination = getService().getDropoffLocation();
+        if(this.route != null) {
+            this.location = this.route.get(0);
+            this.route.remove(0);
+        }
 
-                // notify when vehicle arrives at pickup or destination
-                if (ApplicationLibrary.isSameLocation(getLocation(), origin)) {
+        if(this.service != null) {
+            // get origin and destination of current service
+            ILocation origin = getLocation();
+            ILocation destination = getService().getDropoffLocation();
 
-                    notifyUserArrivalAtPickupLocation();
+            // notify when vehicle arrives at pickup or destination
+            if (ApplicationLibrary.isSameLocation(service.getUser().getLocation(), origin)) {
 
-                } else if (ApplicationLibrary.isSameLocation(getLocation(), destination)) {
+                notifyArrivalAtPickupLocation();
+                //startService();
+                System.out.println("hmm");
 
-                    notifyArrivalAtDropOffLocation();
+            } else if (ApplicationLibrary.isSameLocation(getLocation(), destination)) {
 
-                }
+                notifyArrivalAtDropOffLocation();
+                System.out.println("whoa");
+
             }
         }
     } // method move
@@ -156,19 +164,19 @@ public class MicroVehicle implements IMicroVehicle  {
     public String toString() {
         String s = " ";
 
-        if(this.status == MicroVehicleStatus.BOOKED) {
-            s = " booked for user " + this.getService().getUser().getId();
-        } else if (this.status == MicroVehicleStatus.FREE) {
-            s = " free at " + getLocation();
-        } else if (this.status == MicroVehicleStatus.SERVICE) {
-            s = " in service with user " + this.getService().getUser().getId();
+        if(this.status == VehicleStatus.BOOKED) {
+            s = " is booked for User " + this.getService().getUser().getId();
+        } else if (this.status == VehicleStatus.FREE) {
+            s = " is free";
+        } else if (this.status == VehicleStatus.SERVICE) {
+            s = " is in service with User " + this.getService().getUser().getId() + " to " + getDestination();
         }
 
-        return getId() + " is" + s;
+        return getId() + " at " + getLocation() + s;
     } // method toString
 
     public IService getService() {
-        if (this.status != MicroVehicleStatus.FREE) {
+        if (this.status != VehicleStatus.FREE) {
             return this.service;
         }
         return null;

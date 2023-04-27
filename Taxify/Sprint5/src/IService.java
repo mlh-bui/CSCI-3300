@@ -10,5 +10,7 @@ public interface IService {
     void setStars(int stars);
     int calculateDistance();
     String toString();
+    IVehicle getVehicle();
+    void setVehicle(IVehicle vehicle);
 
 } // interface IService

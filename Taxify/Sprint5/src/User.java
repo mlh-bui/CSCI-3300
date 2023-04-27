@@ -18,7 +18,7 @@ public class User implements IUser {
     private ITaxiCompany company;
 
     /** User request for a service or not */
-    private boolean hasService;
+    // private boolean hasService;
 
     /** User service */
     private IService service;
@@ -31,15 +31,17 @@ public class User implements IUser {
     /** User route to Micro Vehicles */
     private List<ILocation> route;
 
+
+
     /** Basic constructor */
-    public User(int id, String firstName, String lastName, ILocation location) {
+    public User(int id, String firstName, String lastName, ILocation location, List<IVehicle> vehicles) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.location = location;
         this.destination = ApplicationLibrary.randomLocation(this.location);
-        this.hasService = false;
-        this.route = null;
+        //this.hasService = false;
+        this.route = setRouteToDestination(this.location,this.destination);
     }
 
     /* Accessors and Mutators */
@@ -59,9 +61,9 @@ public class User implements IUser {
     }
 
     @Override
-    public boolean hasService() {
-        return this.hasService;
-    }
+    //public boolean hasService() {
+    //    return this.hasService;
+    // }
 
     public ILocation getLocation() {
         return location;
@@ -72,15 +74,16 @@ public class User implements IUser {
         this.location = location;
     }
 
-    @Override
-    public void setHasService(boolean hasService) {
-        this.hasService = hasService;
-    }
+    //@Override
+    //public void setHasService(boolean hasService) {
+    //   this.hasService = hasService;
+    // }
 
     /** Ride request to taxi company from the user */
     @Override
     public void requestService() {
         this.company.provideService(this.id);
+
     }
 
     public void requestSharedService() {
@@ -88,6 +91,7 @@ public class User implements IUser {
         if (ApplicationLibrary.rand() % 2 == 0) {
             this.company.provideSharedService(this.id);
         }
+
     }
 
     @Override
@@ -99,7 +103,12 @@ public class User implements IUser {
 
     public void makeReservation() {
         this.company.provideMicroService(this.id);
-        Service service1 = new Service(this, this.getLocation(), )
+        if(hasService()) {
+            this.destination = this.service.getPickupLocation();
+            this.route = setRouteToDestination(this.location, this.destination);
+        }
+
+        //Service service1 = new Service(this, this.getLocation(), );
     }
 
     /**
@@ -119,12 +128,14 @@ public class User implements IUser {
     @Override
     public String toString() {
         String s = "";
-        if(!this.hasService()) {
-            s = " is free with path " + showUserRoute();
+        if(!hasService()) {
+            s = " is heading to " + this.destination + " is free with path " + showUserRoute();
+        } else if (hasService() && this.service.getVehicle() instanceof MicroVehicle) {
+            s = " booked a micro vehicle service at " + this.destination + " is free with path " + showUserRoute();
+        } else {
+            s = " waiting for pick up";
         }
-
-        return "User " + this.id + " at " + this.location + " heading to " + this.destination + s;
-
+        return "User " + this.id + " at " + this.location + s;
     } // method toString
 
     public void setCompany(ITaxiCompany company) {
@@ -143,36 +154,37 @@ public class User implements IUser {
 
 
     public void move() {
-        this.location = this.route.get(0);
-        this.route.remove(0);
+        if(this.route != null) {
+            this.location = this.route.get(0);
+            this.route.remove(0);
+        }
 
-        if (this.route.isEmpty()) {
-            if (!hasService()) {
-                // the user continues to travel to random locations
+        if (this.route == null || this.route.isEmpty()) {
+            if (hasService() && this.service.getVehicle() instanceof MicroVehicle) {
+                // get origin and destination of current service
+                ILocation destination = this.service.getPickupLocation();
 
-                this.destination = ApplicationLibrary.randomLocation(this.location);
                 this.route = setRouteToDestination(this.location, this.destination);
 
-            } else {
-
-                IService currentService = this.service;
-
-                // get origin and destination of current service
-                ILocation destination = currentService.getPickupLocation();
-
                 // notify when vehicle arrives at pickup or destination
-                if (ApplicationLibrary.isSameLocation(this.location,destination)) {
+                if (ApplicationLibrary.isSameLocation(this.location, destination)) {
 
                     notifyArrivalAtPickupLocation();
 
                 }
+            } else {
+                this.destination = ApplicationLibrary.randomLocation(this.location);
+                this.route = setRouteToDestination(this.location, this.destination);
             }
+
         }
     } // method move
 
     public void notifyArrivalAtPickupLocation() {
         // notify the company that the vehicle is at the pickup location and start the service
-        this.company.arrivedAtPickupLocation();
+        this.company.userArrivesAtMicroVehicleLocation(this);
+        this.route = null;
+
 
     } // method notifyArrivalAtPickupLocation
 
@@ -203,4 +215,35 @@ public class User implements IUser {
         return route;
     } // method setDrivingRouteToDestination
 
+    public void setService(IService service) {
+        this.service = service;
+    }
+
+    @Override
+    public IService getService() {
+        return service;
+    }
+
+    public void setRoute(List<ILocation> route) {
+        this.route = route;
+    }
+
+    @Override
+    public List<ILocation> getRoute() {
+        return route;
+    }
+
+    public boolean hasService() {
+        return service != null;
+    }
+
+    @Override
+    public void setDestination(ILocation destination) {
+        this.destination = destination;
+    }
+
+    @Override
+    public ILocation getDestination() {
+        return this.destination;
+    }
 } // class User

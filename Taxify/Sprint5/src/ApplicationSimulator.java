@@ -43,8 +43,12 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
             }
         }
 
+        System.out.println();
+
         for(IUser user: this.users) {
-            System.out.println(user.toString());
+            if(user.getRoute() != null) {
+                System.out.println(user.toString());
+            }
         }
 
         System.out.println();
@@ -79,9 +83,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
         }
 
         for(IUser user : this.users) {
-
-            user.move();
-
+                user.move();
         }
     } // method update
 
@@ -92,7 +94,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
         IUser user = findFreeUser();
 
         // request service if the user does not have one yet
-        if(!user.hasService()) {
+        if(user.getService() == null && vehicleAvailability()) {
             user.requestService();
         }
 
@@ -104,7 +106,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
         IUser user = findFreeUser();
 
         // request service if the user does not have one yet
-        if(!user.hasService()) {
+        if(user.getService() == null) {
             user.requestSharedService();
         }
 
@@ -113,7 +115,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
     public void requestMicroService() {
         IUser user = findFreeUser();
 
-        if (!user.hasService()) {
+        if (user.getService() == null) {
             user.makeReservation();
         }
     }
@@ -126,11 +128,16 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
             if(vehicles.get(i).getStatus() == VehicleStatus.PICKUP) {
                 index = i;
             }
+
         }
 
-        if(index != -1 && users.get(index).hasService()) {
-            this.users.get(index).cancelRide();
+        if(index != -1) {
+
+            vehicles.get(index).getService().getUser().cancelRide();
         }
+        /*if(index != -1 && users.get(index).getService() == null) {
+            this.users.get(index).cancelRide();
+        }*/
 
     } // method cancelService
 
@@ -149,13 +156,25 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
     private IUser findFreeUser() {
         int index;
+        int counter = 0;
 
         do {
             index = ApplicationLibrary.rand(users.size());
+            counter++;
         }
         // continue searching while user at index has a service
-        while(users.get(index).hasService());
+        while(users.get(index).getService() != null && counter < 50);
 
         return users.get(index); // return a user without a service
     } // method findFreeUser
+
+    private boolean vehicleAvailability() {
+        boolean isFree = false;
+        for(IVehicle vehicle : vehicles) {
+            if (vehicle.isFree()) {
+                isFree = true;
+            }
+        }
+        return isFree;
+    }
 }

@@ -1,5 +1,5 @@
 public enum VehicleStatus {
 
-    FREE, PICKUP, SERVICE, SHARED_SERVICE
+    FREE, PICKUP, SERVICE, SHARED_SERVICE, BOOKED
 
 }

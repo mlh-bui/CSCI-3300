@@ -29,6 +29,7 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
     /** Route using ILocation */
     private List<ILocation> route;
 
+
     /** Basic Constructor for Vehicle */
     public Vehicle(int id, ILocation location) {
         this.id = id;
@@ -105,39 +106,15 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
     @Override
     public void pickService(IService service) {
         // pick a service, set destination to the service pickup location, and status to "pickup"
+        this.service = new ArrayList<>();
 
         this.service.add(service);
         this.destination = service.getPickupLocation();
-        this.route = setDrivingRouteToDestination(this.location, this.destination); // WRONG??
-        this.status = VehicleStatus.PICKUP;
-    } // method pickService
-
-    /*
-    public void pickMicroService(IService service) {
-        this.service.add(service);
-        this.destination = service.getPickupLocation();
-        this.route = setDrivingRouteToDestination(this.location, this.destination); // user's moving to vehicle
-        this.microStatus = MicroVehicleStatus.BOOKED;
-    }*/
-
-    /*public void startMicroService() {
-        this.destination = this.service.get(0).getDropoffLocation();
         this.route = setDrivingRouteToDestination(this.location, this.destination);
-        this.microStatus = MicroVehicleStatus.SERVICE;
-    }
+        this.status = VehicleStatus.PICKUP;
 
-    public void endMicroService() {
-        this.statistics.updateBilling(this.calculateCost());
-        this.statistics.getServices();
-
-        if (getService().getStars() != 0) {
-            this.statistics.updateStars(getService().getStars());
-            this.statistics.updateReviews();
-        }
-
-        this.service = null;
-        this.microStatus = MicroVehicleStatus.FREE;
-    }*/
+        service.getUser().setRoute(null);
+    } // method pickService
 
     /**
      * Service to drop-off location
@@ -180,11 +157,23 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
         }
 
         if(this.service.size() == 1) {
+            IUser currentUser = getService().getUser();
+            currentUser.setLocation(this.location);
+            currentUser.setDestination(ApplicationLibrary.randomLocation(this.location));
+            currentUser.setRoute(setDrivingRouteToDestination(currentUser.getLocation(), currentUser.getDestination()));
+            currentUser.setService(null);
+
             this.service = null;
             this.destination = ApplicationLibrary.randomLocation(this.location);
             this.route = setDrivingRouteToDestination(this.location, this.destination);
             this.status = VehicleStatus.FREE;
         } else {
+            IUser currentUser = getService().getUser();
+            currentUser.setLocation(this.location);
+            currentUser.setDestination(ApplicationLibrary.randomLocation(this.location));
+            currentUser.setRoute(setDrivingRouteToDestination(currentUser.getLocation(), currentUser.getDestination()));
+            currentUser.setService(null);
+
             this.service.remove(0);
             this.destination = getService().getDropoffLocation();
             this.route = setDrivingRouteToDestination(this.location,this.destination);
@@ -243,28 +232,52 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
         this.route.remove(0);
 
         if (this.route.isEmpty()) {
-            if (this.service == null) {
-                // the vehicle continues its random route
+            if (this.service == null || this.service.isEmpty() ) {
+                // the vehicle continues its random drive
 
                 this.destination = ApplicationLibrary.randomLocation(this.location);
                 this.route = setDrivingRouteToDestination(this.location, this.destination);
             }
+            // if there is more than one service for the vehicle
             else {
-                // checks if the vehicle has arrived to a pickup or drop off location
+                IService currentService = this.getService();
 
-                ILocation origin = this.service.getPickupLocation();
-                ILocation destination = this.service.getDropoffLocation();
+                // get origin and destination of current service
+                ILocation origin = currentService.getPickupLocation();
+                ILocation destination = currentService.getDropoffLocation();
 
-                if (this.location.getX() == origin.getX() && this.location.getY() == origin.getY()) {
+                // for multiple services aka shared services
+                if (this.service.size() > 1) {
+
+                    origin = this.service.get(0).getPickupLocation();
+                    destination = this.service.get(0).getDropoffLocation();
+
+                    ILocation secondDropOff;
+                    ILocation secondPickUp = currentService.getPickupLocation();
+                    secondDropOff = currentService.getDropoffLocation();
+
+                    // notify when vehicle arrives at secondary pickup (current service pickup location)
+                    if (ApplicationLibrary.isSameLocation(this.location, secondPickUp)) {
+
+                        notifyArrivalAtSecondaryPickUpLocation();
+
+                    } else if(ApplicationLibrary.isSameLocation(this.location, secondDropOff)) {
+
+                        notifyArrivalAtSecondaryDropOffLocation();
+
+                    }
+                }
+
+                // notify when vehicle arrives at pickup or destination
+                if (ApplicationLibrary.isSameLocation(this.location,origin)) {
 
                     notifyArrivalAtPickupLocation();
 
-                } else if (this.location.getX() == destination.getX() && this.location.getY() == destination.getY()) {
+                } else if (ApplicationLibrary.isSameLocation(this.location,destination)) {
 
-                    notifyArrivalAtDropoffLocation();
+                    notifyArrivalAtDropOffLocation();
 
                 }
-
             }
         }
     } // method move
@@ -362,32 +375,6 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
 
         return route;
     } // method setDrivingRouteToDestination
-
-    /*
-    private ILocation closestDropOff(ILocation dropOff1, ILocation dropOff2) {
-        ILocation closest = dropOff1;
-        int distance1 = ApplicationLibrary.distance(getLocation(),dropOff1);
-        int distance2 = ApplicationLibrary.distance(getLocation(),dropOff2);
-
-        if(distance1 > distance2) {
-            closest = dropOff2;
-        }
-
-        return closest;
-    }
-
-    private ILocation farthestDropOff(ILocation dropOff1, ILocation dropOff2) {
-        ILocation closest = dropOff1;
-        int distance1 = ApplicationLibrary.distance(getLocation(),dropOff1);
-        int distance2 = ApplicationLibrary.distance(getLocation(),dropOff2);
-
-        if(distance1 < distance2) {
-            closest = dropOff2;
-        }
-
-        return closest;
-    }
-     */
 
     @Override
     public void setStatistics(IStatistics statistics) {

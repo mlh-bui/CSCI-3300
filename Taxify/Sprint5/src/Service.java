@@ -14,11 +14,15 @@ public class Service implements IService {
     /** Rating of service */
     private int stars;
 
+    /** Vehicle for Service */
+    private IVehicle vehicle;
+
     /** Basic constructor */
-    public Service(IUser user, ILocation pickup, ILocation dropoff) {
+    public Service(IUser user, ILocation pickup, ILocation dropoff, IVehicle vehicle) {
         this.user = user;
         this.pickup = pickup;
         this.dropoff = dropoff;
+        this.vehicle = vehicle;
         this.stars = 0;
     }
 
@@ -63,4 +67,11 @@ public class Service implements IService {
         return this.getPickupLocation().toString() + " to " + this.getDropoffLocation().toString();
     }
 
+    public IVehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(IVehicle vehicle) {
+        this.vehicle = vehicle;
+    }
 } // class Service
