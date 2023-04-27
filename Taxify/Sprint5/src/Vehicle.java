@@ -159,8 +159,9 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
         if(this.service.size() == 1) {
             IUser currentUser = getService().getUser();
             currentUser.setLocation(this.location);
-            currentUser.setDestination(ApplicationLibrary.randomLocation(this.location));
+            /*currentUser.setDestination(ApplicationLibrary.randomLocation(this.location));
             currentUser.setRoute(setDrivingRouteToDestination(currentUser.getLocation(), currentUser.getDestination()));
+            currentUser.setService(null);*/
             currentUser.setService(null);
 
             this.service = null;
@@ -169,9 +170,10 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
             this.status = VehicleStatus.FREE;
         } else {
             IUser currentUser = getService().getUser();
-            currentUser.setLocation(this.location);
+            /*currentUser.setLocation(this.location);
             currentUser.setDestination(ApplicationLibrary.randomLocation(this.location));
             currentUser.setRoute(setDrivingRouteToDestination(currentUser.getLocation(), currentUser.getDestination()));
+           */
             currentUser.setService(null);
 
             this.service.remove(0);
@@ -252,9 +254,8 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
                     origin = this.service.get(0).getPickupLocation();
                     destination = this.service.get(0).getDropoffLocation();
 
-                    ILocation secondDropOff;
                     ILocation secondPickUp = currentService.getPickupLocation();
-                    secondDropOff = currentService.getDropoffLocation();
+                    ILocation secondDropOff = currentService.getDropoffLocation();
 
                     // notify when vehicle arrives at secondary pickup (current service pickup location)
                     if (ApplicationLibrary.isSameLocation(this.location, secondPickUp)) {

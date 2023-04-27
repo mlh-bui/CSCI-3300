@@ -18,7 +18,6 @@ public class User implements IUser {
     private ITaxiCompany company;
 
     /** User request for a service or not */
-    // private boolean hasService;
 
     /** User service */
     private IService service;
@@ -32,7 +31,6 @@ public class User implements IUser {
     private List<ILocation> route;
 
 
-
     /** Basic constructor */
     public User(int id, String firstName, String lastName, ILocation location, List<IVehicle> vehicles) {
         this.id = id;
@@ -40,7 +38,6 @@ public class User implements IUser {
         this.lastName = lastName;
         this.location = location;
         this.destination = ApplicationLibrary.randomLocation(this.location);
-        //this.hasService = false;
         this.route = setRouteToDestination(this.location,this.destination);
     }
 
@@ -60,11 +57,6 @@ public class User implements IUser {
         return this.lastName;
     }
 
-    @Override
-    //public boolean hasService() {
-    //    return this.hasService;
-    // }
-
     public ILocation getLocation() {
         return location;
     }
@@ -73,11 +65,6 @@ public class User implements IUser {
     public void setLocation(ILocation location) {
         this.location = location;
     }
-
-    //@Override
-    //public void setHasService(boolean hasService) {
-    //   this.hasService = hasService;
-    // }
 
     /** Ride request to taxi company from the user */
     @Override
@@ -91,7 +78,6 @@ public class User implements IUser {
         if (ApplicationLibrary.rand() % 2 == 0) {
             this.company.provideSharedService(this.id);
         }
-
     }
 
     @Override
@@ -107,8 +93,6 @@ public class User implements IUser {
             this.destination = this.service.getPickupLocation();
             this.route = setRouteToDestination(this.location, this.destination);
         }
-
-        //Service service1 = new Service(this, this.getLocation(), );
     }
 
     /**
@@ -132,6 +116,8 @@ public class User implements IUser {
             s = " is heading to " + this.destination + " is free with path " + showUserRoute();
         } else if (hasService() && this.service.getVehicle() instanceof MicroVehicle) {
             s = " booked a micro vehicle service at " + this.destination + " is free with path " + showUserRoute();
+        } else if (hasService()) {
+            s = " with service " + service.toString() + " and " + this.service.getVehicle() + " " + this.service.getVehicle().getId();
         }
         return "User " + this.id + " at " + this.location + s;
     } // method toString
@@ -152,30 +138,29 @@ public class User implements IUser {
 
 
     public void move() {
-        if(this.route != null) {
+        if(this.route != null && this.route.size() > 0) {
             this.location = this.route.get(0);
             this.route.remove(0);
         }
 
-        if (this.route == null || this.route.isEmpty()) {
-            if (hasService() && this.service.getVehicle() instanceof MicroVehicle) {
-                // get origin and destination of current service
-                ILocation destination = this.service.getPickupLocation();
+        // if the user has not requested a service and their route is empty
+         if (hasService() && this.service.getVehicle() instanceof MicroVehicle) {
 
-                this.route = setRouteToDestination(this.location, this.destination);
+            // get destination of current service
+            ILocation destination = this.service.getPickupLocation();
 
-                // notify when vehicle arrives at pickup or destination
-                if (ApplicationLibrary.isSameLocation(this.location, destination)) {
+            // move user to vehicle
+            this.route = setRouteToDestination(this.location, this.destination);
 
-                    notifyArrivalAtPickupLocation();
+            // notify when user arrives at the micro vehicle location
+            if (ApplicationLibrary.isSameLocation(this.location, destination)) {
 
-                }
+                notifyArrivalAtPickupLocation();
 
-            } else {
-                this.destination = ApplicationLibrary.randomLocation(this.location);
-                this.route = setRouteToDestination(this.location, this.destination);
             }
-
+        } else {
+            this.destination = ApplicationLibrary.randomLocation(this.location);
+            this.route = setRouteToDestination(this.location, this.destination);
         }
     } // method move
 

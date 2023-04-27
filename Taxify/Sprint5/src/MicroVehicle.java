@@ -115,7 +115,6 @@ public class MicroVehicle implements IVehicle  {
 
     @Override
     public void notifyArrivalAtPickupLocation( ) {
-        this.company.userArrivesAtMicroVehicleLocation(this.service.getUser());
         this.startService();
     }
 
@@ -138,6 +137,12 @@ public class MicroVehicle implements IVehicle  {
         }
 
         if(this.service != null) {
+            ILocation origin = getService().getPickupLocation();
+            if(ApplicationLibrary.isSameLocation(this.service.getUser().getLocation(), origin)) {
+                // notifyArrivalAtPickupLocation();
+                this.startService();
+            }
+
             // get origin and destination of current service
             ILocation destination = getService().getDropoffLocation();
 
@@ -145,7 +150,6 @@ public class MicroVehicle implements IVehicle  {
            if (ApplicationLibrary.isSameLocation(getLocation(), destination)) {
 
                 notifyArrivalAtDropOffLocation();
-                System.out.println("whoa");
 
             }
         }

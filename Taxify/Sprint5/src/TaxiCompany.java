@@ -158,7 +158,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
             ILocation origin = this.vehicles.get(vehicleIndex).getLocation();
             ILocation destination = ApplicationLibrary.randomLocation(origin); // destination = micro vehicle's location
 
-            Service service = new Service(this.users.get(userIndex), origin, destination, this.vehicles.get(vehicleIndex));    // create shared service
+            Service service = new Service(this.users.get(userIndex), this.vehicles.get(vehicleIndex).getLocation(), destination, this.vehicles.get(vehicleIndex));    // create shared service
 
             this.users.get(userIndex).setService(service);
             this.vehicles.get(vehicleIndex).pickService(service);
@@ -253,7 +253,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
             // if the vehicle has a service & it's user matches the user asking for a cancellation
             if(v.getService() != null && users.get(userIndex) == v.getService().getUser()) {
 
-                v.endService();
+                v.endService(); // CURRENTLY ADDS SERVICE TO STATISTICS? Bad or good dunno
 
                 //this.users.get(userIndex).setHasService(false);
                 this.users.get(userIndex).setService(null);
@@ -277,11 +277,16 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
      * @return int, free vehicle index or -1 otherwise
      */
     private int findFreeVehicle(IUser user) {
+        IVehicle v = this.vehicles.get(ApplicationLibrary.rand(this.vehicles.size() - 1));
+        int tests = 0;
 
-        for(IVehicle v : this.vehicles) {
-            if(v.isFree() && !(v instanceof MicroVehicle)
-                    && !ApplicationLibrary.isSameLocation(user.getLocation(), v.getLocation()))
-                return this.vehicles.indexOf(v);     // returns the index of the vehicle v in the list
+        while(v.isFree() && (!(v instanceof  MicroVehicle)) && tests < 50) {
+            if(!ApplicationLibrary.isSameLocation(user.getLocation(), v.getLocation())) {
+                return this.vehicles.indexOf(v);
+            } else {
+                v = this.vehicles.get(ApplicationLibrary.rand(this.vehicles.size() -1));
+                tests++;
+            }
         }
 
         return -1;
@@ -309,7 +314,6 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
      * @return index of the closest Vehicle, -1 if otherwise
      */
     private int findVehicleForSharedService(int userIndex) { // in relation to user location
-        int closest = -1;
         int minDistance = 3;   // minimum distance from user
         int maxDistance = 5;   // Vehicle cannot be more than 3 blocks away
         for(IVehicle v : this.vehicles) {
@@ -317,13 +321,11 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
             if(v.getStatus() == VehicleStatus.SERVICE
                     && minDistance < distance
                     && distance < maxDistance) {
-                closest = this.vehicles.indexOf(v); // return index of the vehicle
+                return this.vehicles.indexOf(v); // return index of the vehicle
             }
         }
 
-        System.out.println("closest vehicle " + closest);
-
-        return closest;
+        return -1;
     } // method findNearestVehicle
 
     // THIS IS WRONG (Doesn't find the nearest vehicle, just a close one like for shared)

@@ -15,13 +15,10 @@ public interface IUser {
     void requestService();
     void requestSharedService();
     void rateService(IService service);
-    //boolean acceptShareRide();
     String toString();
     void setCompany(ITaxiCompany company);
-
     void cancelRide();
     void makeReservation();
-
     void move();
     String showUserRoute();
     void setService(IService service);

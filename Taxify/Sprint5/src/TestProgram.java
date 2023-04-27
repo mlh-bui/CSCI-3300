@@ -34,11 +34,11 @@ public class TestProgram {
         users.add(u8);
         users.add(u9);
         users.add(u10);
-        users.add(u11);
+        /*users.add(u11);
         users.add(u12);
         users.add(u13);
         users.add(u14);
-        users.add(u15);
+        users.add(u15);*/
 
 
         IVehicle v1 = new Taxi(1, ApplicationLibrary.randomLocation());
@@ -102,17 +102,16 @@ public class TestProgram {
 
             app.update();
 
-            //app.requestMicroService();
             int i = ApplicationLibrary.rand() % 4;
 
             if (i == 0) {
                app.requestService();
             } else if (i == 1){
-                //app.requestSharedService();
+                app.requestSharedService();
             } else if (i == 2) {
                 app.cancelService();
             } else {
-                app.requestMicroService();
+                //app.requestMicroService();
             }
 
         } while (app.getTotalServices() != 0);

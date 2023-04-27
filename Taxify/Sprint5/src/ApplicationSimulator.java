@@ -90,33 +90,42 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
     /** Simulates user request for a service */
     @Override
     public void requestService() {
-        // gets free user
-        IUser user = findFreeUser();
+        int userIndex = findFreeUser();
+        if(userIndex != -1) {
+            IUser user = users.get(userIndex);
 
-        // request service if the user does not have one yet
-        if(user.getService() == null && vehicleAvailability()) {
-            user.requestService();
+            // request service if the user does not have one yet
+            if(user.getService() == null) {
+                user.requestService();
+            }
         }
-
     } // method requestService
 
     /** Simulates user request for a shared service */
     public void requestSharedService() {
         // gets free user
-        IUser user = findFreeUser();
+        int userIndex = findFreeUser();
+        if(userIndex != -1) {
+            IUser user = users.get(userIndex);
 
-        // request service if the user does not have one yet
-        if(user.getService() == null) {
-            user.requestSharedService();
+            // request service if the user does not have one yet
+            if(user.getService() == null) {
+                user.requestSharedService();
+                System.out.println("service was null");
+            }
         }
 
     } // method requestService
 
     public void requestMicroService() {
-        IUser user = findFreeUser();
+        int userIndex = findFreeUser();
+        if(userIndex != -1) {
+            IUser user = users.get(userIndex);
 
-        if (user.getService() == null) {
-            user.makeReservation();
+            // request service if the user does not have one yet
+            if(user.getService() == null) {
+                user.makeReservation();
+            }
         }
     }
 
@@ -154,7 +163,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
         System.out.println(message);
     }
 
-    private IUser findFreeUser() {
+    private int findFreeUser() {
         int index;
         int counter = 0;
 
@@ -165,7 +174,12 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
         // continue searching while user at index has a service
         while(users.get(index).getService() != null && counter < 50);
 
-        return users.get(index); // return a user without a service
+        if(counter == 50) {
+            index = -1;
+        }
+
+
+        return index; // return a user without a service
     } // method findFreeUser
 
     private boolean vehicleAvailability() {
