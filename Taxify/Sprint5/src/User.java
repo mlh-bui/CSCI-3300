@@ -132,8 +132,6 @@ public class User implements IUser {
             s = " is heading to " + this.destination + " is free with path " + showUserRoute();
         } else if (hasService() && this.service.getVehicle() instanceof MicroVehicle) {
             s = " booked a micro vehicle service at " + this.destination + " is free with path " + showUserRoute();
-        } else {
-            s = " waiting for pick up";
         }
         return "User " + this.id + " at " + this.location + s;
     } // method toString
@@ -172,6 +170,7 @@ public class User implements IUser {
                     notifyArrivalAtPickupLocation();
 
                 }
+
             } else {
                 this.destination = ApplicationLibrary.randomLocation(this.location);
                 this.route = setRouteToDestination(this.location, this.destination);

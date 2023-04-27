@@ -83,7 +83,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
         }
 
         for(IUser user : this.users) {
-                user.move();
+            user.move();
         }
     } // method update
 

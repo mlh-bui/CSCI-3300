@@ -113,12 +113,13 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
         if (vehicleIndex != -1) {
 
             ILocation origin = this.users.get(userIndex).getLocation();
-            ILocation destination; // destination = original destination
+            ILocation destination;
 
             do {
                 destination = ApplicationLibrary.randomLocation(origin);
 
             } while (ApplicationLibrary.distance(destination, this.vehicles.get(vehicleIndex).getLocation()) < 3);
+
 
             IService service = new Service(this.users.get(userIndex), origin, destination, this.vehicles.get(vehicleIndex));
 
@@ -137,6 +138,7 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
             // update the counter of services
 
             this.totalServices++;
+            System.out.println(totalServices + " services counter");
 
             return true;
         }
@@ -158,7 +160,6 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
 
             Service service = new Service(this.users.get(userIndex), origin, destination, this.vehicles.get(vehicleIndex));    // create shared service
 
-            //this.users.get(userIndex).setHasService(true);
             this.users.get(userIndex).setService(service);
             this.vehicles.get(vehicleIndex).pickService(service);
 
@@ -221,12 +222,13 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
         int userIndex = indexOfUserId(user);
 
         this.users.get(userIndex).rateService(vehicle.getService());
-        //this.users.get(userIndex).setHasService(false);
         this.users.get(userIndex).setService(null);
 
         // update the counter of services
 
         this.totalServices--;
+
+        System.out.println(totalServices + " after dropped off");
 
         notifyObserver(String.format("%-8s",vehicle.getClass().getSimpleName()) + vehicle.getId() + " drops off SECOND user " + user);
     }

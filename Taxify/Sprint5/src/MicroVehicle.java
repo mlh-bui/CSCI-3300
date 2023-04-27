@@ -76,6 +76,7 @@ public class MicroVehicle implements IVehicle  {
     public void startService() {
         this.destination = this.service.getDropoffLocation();
         this.route = setDrivingRouteToDestination(this.location, this.destination);
+        this.service.getUser().setService(null);
         this.status = VehicleStatus.SERVICE;
     }
 
@@ -93,11 +94,22 @@ public class MicroVehicle implements IVehicle  {
             this.statistics.updateReviews();
         }
 
-        // set service to null, and status to "free"
-        this.service.getUser().setRoute(setDrivingRouteToDestination(this.location,this.destination));
+        /*// set service to null, and status to "free"
+        this.service.getUser().setLocation(this.service.getDropoffLocation());
+        System.out.println(this.service.getUser().getLocation() + " location of user from end service micro");
+
+        this.service.getUser().setDestination(ApplicationLibrary.randomLocation(this.location));
+        this.service.getUser().setRoute(setDrivingRouteToDestination(this.location,this.destination));*/
+
+        IUser currentUser = getService().getUser();
+        currentUser.setLocation(this.location);
+        currentUser.setDestination(ApplicationLibrary.randomLocation(this.location));
+        currentUser.setRoute(setDrivingRouteToDestination(currentUser.getLocation(), currentUser.getDestination()));
+        currentUser.setService(null);
 
         this.service = null;
-        this.destination = ApplicationLibrary.randomLocation(this.location);
+        this.route = null;
+        //this.destination = ApplicationLibrary.randomLocation(this.location);
         this.status = VehicleStatus.FREE;
     }
 
@@ -127,17 +139,10 @@ public class MicroVehicle implements IVehicle  {
 
         if(this.service != null) {
             // get origin and destination of current service
-            ILocation origin = getLocation();
             ILocation destination = getService().getDropoffLocation();
 
             // notify when vehicle arrives at pickup or destination
-            if (ApplicationLibrary.isSameLocation(service.getUser().getLocation(), origin)) {
-
-                notifyArrivalAtPickupLocation();
-                //startService();
-                System.out.println("hmm");
-
-            } else if (ApplicationLibrary.isSameLocation(getLocation(), destination)) {
+           if (ApplicationLibrary.isSameLocation(getLocation(), destination)) {
 
                 notifyArrivalAtDropOffLocation();
                 System.out.println("whoa");

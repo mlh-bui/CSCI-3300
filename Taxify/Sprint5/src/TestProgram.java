@@ -32,13 +32,13 @@ public class TestProgram {
         users.add(u6);
         users.add(u7);
         users.add(u8);
-        /*users.add(u9);
+        users.add(u9);
         users.add(u10);
         users.add(u11);
         users.add(u12);
         users.add(u13);
         users.add(u14);
-        users.add(u15);*/
+        users.add(u15);
 
 
         IVehicle v1 = new Taxi(1, ApplicationLibrary.randomLocation());
@@ -55,9 +55,9 @@ public class TestProgram {
 
         MicroVehicle v11 = new Bike(11,ApplicationLibrary.randomLocation());
         MicroVehicle v12 = new Bike(12,ApplicationLibrary.randomLocation());
-        MicroVehicle v13 = new Scooter(13, ApplicationLibrary.randomLocation());
+        MicroVehicle v13 = new Bike(13, ApplicationLibrary.randomLocation());
         MicroVehicle v14 = new Scooter(14, ApplicationLibrary.randomLocation());
-        MicroVehicle v15 = new Bike(15, ApplicationLibrary.randomLocation());
+        MicroVehicle v15 = new Scooter(15, ApplicationLibrary.randomLocation());
         MicroVehicle v16 = new Scooter(16, ApplicationLibrary.randomLocation());
 
         vehicles.add(v1);
@@ -112,7 +112,7 @@ public class TestProgram {
             } else if (i == 2) {
                 app.cancelService();
             } else {
-                //app.requestMicroService();
+                app.requestMicroService();
             }
 
         } while (app.getTotalServices() != 0);
