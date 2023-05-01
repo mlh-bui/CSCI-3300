@@ -1,6 +1,5 @@
-// Sprint 4 Project: Taxify
+// Sprint 5 Project: Taxify
 // Marissa Bui - CSCI 3300
-
 import java.util.List;
 
 public interface IUser {
@@ -11,7 +10,6 @@ public interface IUser {
     boolean hasService();
     ILocation getLocation();
     void setLocation(ILocation location) ;
-    //void setHasService(boolean hasService);
     void requestService();
     void requestSharedService();
     void rateService(IService service);
@@ -25,7 +23,5 @@ public interface IUser {
     IService getService();
     void setRoute(List<ILocation> route);
     List<ILocation> getRoute();
-    void setDestination(ILocation destination);
-    ILocation getDestination();
 
 } // interface IUser

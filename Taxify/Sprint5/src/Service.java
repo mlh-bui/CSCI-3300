@@ -1,4 +1,4 @@
-// Sprint 4 Project: Taxify
+// Sprint 5 Project: Taxify
 // Marissa Bui - CSCI 3300
 
 public class Service implements IService {
@@ -52,6 +52,14 @@ public class Service implements IService {
         this.stars = stars;
     }
 
+    public IVehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(IVehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
     /**
      * Finds the distance between pick up & drop off
      *
@@ -67,11 +75,4 @@ public class Service implements IService {
         return this.getPickupLocation().toString() + " to " + this.getDropoffLocation().toString();
     }
 
-    public IVehicle getVehicle() {
-        return vehicle;
-    }
-
-    public void setVehicle(IVehicle vehicle) {
-        this.vehicle = vehicle;
-    }
 } // class Service

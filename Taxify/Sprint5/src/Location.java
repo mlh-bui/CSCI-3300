@@ -1,5 +1,5 @@
-// Sprint 4 Project: Taxify
-// Marissa Bui - CSCI 3300 - 4/20
+// Sprint 5 Project: Taxify
+// Marissa Bui - CSCI 3300
 
 public class Location implements ILocation {
     /** x-coordinate for map */

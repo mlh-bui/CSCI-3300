@@ -119,12 +119,14 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
     private IUser findFreeUser() {
         int index;
+        int test = 0;
 
         do {
             index = ApplicationLibrary.rand(users.size());
+            test++;
         }
         // continue searching while user at index has a service
-        while(users.get(index).hasService());
+        while(users.get(index).hasService() && test < 50);
 
         return users.get(index); // return a user without a service
     } // method findFreeUser

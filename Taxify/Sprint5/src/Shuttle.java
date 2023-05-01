@@ -1,4 +1,5 @@
-// Marissa Bui - CSCI 3300 - 2/17
+// Sprint 5 Project: Taxify
+// Marissa Bui - CSCI 3300
 
 public class Shuttle extends Vehicle {
 

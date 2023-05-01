@@ -243,7 +243,6 @@ public class TaxiCompany implements ITaxiCompany, ISubject {
      * @return int, free vehicle index or -1 otherwise
      */
     private int findFreeVehicle() {
-        // MIGHT CHANGE
 
         if(ApplicationLibrary.rand() % 2 == 0) {
             for(IVehicle v : this.vehicles) {

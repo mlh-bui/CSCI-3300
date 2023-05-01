@@ -1,6 +1,5 @@
-// Sprint 4 Project: Taxify
+// Sprint 5 Project: Taxify
 // Marissa Bui - CSCI 3300
-
 public interface IStatistics {
 
     int getServices();

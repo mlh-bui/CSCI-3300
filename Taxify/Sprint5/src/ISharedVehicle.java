@@ -1,3 +1,6 @@
+// Sprint 5 Project: Taxify
+// Marissa Bui - CSCI 3300
+
 import java.util.List;
 
 public interface ISharedVehicle {
@@ -5,4 +8,4 @@ public interface ISharedVehicle {
     void notifyArrivalAtSecondaryPickUpLocation();
     void notifyArrivalAtSecondaryDropOffLocation();
     void setService(List<IService> service);
-}
+} // interface ISharedVehicle

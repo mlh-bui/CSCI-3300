@@ -50,7 +50,9 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
     @Override
     public void pickService(IService service) {
         // pick a service, set destination to the service pickup location, and status to "pickup"
-        this.service = new ArrayList<>();
+        if(this.service == null) {
+            this.service = new ArrayList<>();
+        }
 
         this.service.add(service);
         this.destination = service.getPickupLocation();
@@ -73,6 +75,10 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
     } // method startService
 
 
+    /**
+     * Starts Service to first drop-off location after picking up the second user
+     * Updates vehicle driving route & status to shared service
+     */
     public void startSharedService() {
         this.destination = this.service.get(0).getDropoffLocation();
         this.route = setDrivingRouteToDestination(this.location, this.destination);
@@ -184,7 +190,6 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
 
                 // for multiple services aka shared services
                 if (this.service.size() > 1) {
-
                     origin = this.service.get(0).getPickupLocation();
                     destination = this.service.get(0).getDropoffLocation();
 
@@ -237,7 +242,7 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
     } // method calculateCost
 
     /**
-     * Shows locations on route as a string
+     * Shows locations on vehicle route as a string
      *
      * @return route as a string
      */
@@ -360,4 +365,5 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
     public void setStatistics(IStatistics statistics) {
         this.statistics = statistics;
     } // method statistics
+
 } // class Vehicle

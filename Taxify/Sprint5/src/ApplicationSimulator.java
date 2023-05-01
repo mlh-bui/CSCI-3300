@@ -28,7 +28,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
         System.out.println("\n" + this.company.getName() + " status \n");
 
-        // unnecessary separation, can print all in a row but visually like better (MIGHT CHANGE)
+        // show vehicles
         for (IVehicle vehicle : this.vehicles) {
             if(!(vehicle instanceof MicroVehicle)) {
                 System.out.println(vehicle.toString());
@@ -37,6 +37,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
         System.out.println();
 
+        // show micro vehicles
         for(IVehicle microVehicle : this.vehicles) {
             if(microVehicle instanceof MicroVehicle) {
                 System.out.println(microVehicle.toString());
@@ -45,6 +46,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
         System.out.println();
 
+        // show users, note: only show users with routes
         for(IUser user: this.users) {
             if(user.getRoute() != null) {
                 System.out.println(user.toString());
@@ -116,6 +118,8 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
     } // method requestService
 
+    /** Simulate user request for a micro mobility service */
+
     public void requestMicroService() {
         int userIndex = findFreeUser();
         if(userIndex != -1) {
@@ -126,7 +130,7 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
                 user.makeReservation();
             }
         }
-    }
+    } // method requestMicroService
 
     /** Simulates a user request to a cancel a service */
     public void cancelService() {
@@ -136,16 +140,13 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
             if(vehicles.get(i).getStatus() == VehicleStatus.PICKUP) {
                 index = i;
             }
-
         }
 
         if(index != -1) {
-
             vehicles.get(index).getService().getUser().cancelRide();
         }
 
     } // method cancelService
-
 
     /** Returns total services for company */
     @Override
@@ -159,6 +160,11 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
         System.out.println(message);
     }
 
+    /**
+     * Finds user without a service
+     *
+     * @return int, index of user
+     */
     private int findFreeUser() {
         int index;
         int counter = 0;
@@ -177,13 +183,4 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
         return index; // return a user without a service
     } // method findFreeUser
 
-    private boolean vehicleAvailability() {
-        boolean isFree = false;
-        for(IVehicle vehicle : vehicles) {
-            if (vehicle.isFree()) {
-                isFree = true;
-            }
-        }
-        return isFree;
-    }
-}
+} // class ApplicationSimulator

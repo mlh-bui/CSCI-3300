@@ -49,7 +49,7 @@ public class MicroVehicle implements IVehicle  {
     public void pickService(IService service) {
         this.status = VehicleStatus.BOOKED;
         this.service = service;
-    }
+    } // method pickService
 
     /**
      * Service to drop-off location
@@ -59,7 +59,7 @@ public class MicroVehicle implements IVehicle  {
         this.destination = this.service.getDropoffLocation();
         this.route = setDrivingRouteToDestination(this.location, this.destination);
         this.status = VehicleStatus.SERVICE;
-    }
+    } // method startService
 
     /**
      * Calculates cost of ride & updates statistics
@@ -95,12 +95,12 @@ public class MicroVehicle implements IVehicle  {
     @Override
     public void notifyArrivalAtPickupLocation( ) {
         this.startService();
-    } // method notifyArricalAtPickUpLocation
+    } // method notifyArrivalAtPickUpLocation
 
     /** At the drop-off location the company is notified and the service ends */
     @Override
     public void notifyArrivalAtDropOffLocation() {
-        this.company.arrivedAtDropOffLocation(this);
+        this.company.arrivedAtMicroDropLocation(this);
         this.endService();
     } // method notifyArrivalAtDropOffLocation
 
@@ -259,10 +259,11 @@ public class MicroVehicle implements IVehicle  {
         return null;
     } // method getService
 
+    // does not have multiple services
     @Override
     public List<IService> getServices() {
         return null;
-    }
+    } // method getServices
 
     @Override
     public void setStatistics(IStatistics statistics) {
