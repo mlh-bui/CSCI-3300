@@ -1,3 +1,6 @@
+// Sprint 5 Project: Taxify
+// Marissa Bui - CSCI 3300
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,49 +40,31 @@ public class MicroVehicle implements IVehicle  {
         this.statistics = new Statistics();
     }
 
-    @Override
-    public int getId() {
-        return this.id;
-    }
-
-    @Override
-    public ILocation getLocation() {
-        return this.location;
-    }
-
-    @Override
-    public ILocation getDestination() {
-        return this.destination;
-    }
-
-    @Override
-    public IStatistics getStatistics() {
-        return this.statistics;
-    }
-
-    @Override
-    public VehicleStatus getStatus() {
-        return this.status;
-    }
-
-    @Override
-    public void setCompany(ITaxiCompany company) {
-        this.company = company;
-    }
-
+    /**
+     * Reserves vehicle for user by changing status to booked
+     *
+     * @param service, assigned service to vehicle
+     */
     @Override
     public void pickService(IService service) {
         this.status = VehicleStatus.BOOKED;
         this.service = service;
     }
 
+    /**
+     * Service to drop-off location
+     * Updates vehicle driving route & status to service
+     */
     public void startService() {
         this.destination = this.service.getDropoffLocation();
         this.route = setDrivingRouteToDestination(this.location, this.destination);
-        this.service.getUser().setService(null);
         this.status = VehicleStatus.SERVICE;
     }
 
+    /**
+     * Calculates cost of ride & updates statistics
+     * Sets vehicle status to free and ends service for the vehicle and user
+     */
     public void endService() {
         // update vehicle statistics
 
@@ -94,41 +79,44 @@ public class MicroVehicle implements IVehicle  {
             this.statistics.updateReviews();
         }
 
-        /*// set service to null, and status to "free"
-        this.service.getUser().setLocation(this.service.getDropoffLocation());
-        System.out.println(this.service.getUser().getLocation() + " location of user from end service micro");
-
-        this.service.getUser().setDestination(ApplicationLibrary.randomLocation(this.location));
-        this.service.getUser().setRoute(setDrivingRouteToDestination(this.location,this.destination));*/
-
+        // update user's location (they've been "dropped off")
         IUser currentUser = getService().getUser();
         currentUser.setLocation(this.location);
-        currentUser.setDestination(ApplicationLibrary.randomLocation(this.location));
-        currentUser.setRoute(setDrivingRouteToDestination(currentUser.getLocation(), currentUser.getDestination()));
         currentUser.setService(null);
 
+        // at the end of a service, the vehicle remains at drop off location
         this.service = null;
+        this.destination = null;
         this.route = null;
-        //this.destination = ApplicationLibrary.randomLocation(this.location);
         this.status = VehicleStatus.FREE;
-    }
+    } // method end Service
 
+    /** At the pick-up location the company is notified and a micro vehicle service starts */
     @Override
     public void notifyArrivalAtPickupLocation( ) {
         this.startService();
-    }
+    } // method notifyArricalAtPickUpLocation
 
+    /** At the drop-off location the company is notified and the service ends */
     @Override
     public void notifyArrivalAtDropOffLocation() {
         this.company.arrivedAtDropOffLocation(this);
         this.endService();
-    }
+    } // method notifyArrivalAtDropOffLocation
 
+    /**
+     * Checks vehicle status for availability
+     *
+     * @return true, if vehicle is free
+     */
     @Override
     public boolean isFree() {
         return this.status == VehicleStatus.FREE;
-    }
+    } // method isFree
 
+    /**
+     * Move while the micro vehicle has a service
+     */
     @Override
     public void move() {
         if(this.route != null) {
@@ -139,8 +127,9 @@ public class MicroVehicle implements IVehicle  {
         if(this.service != null) {
             ILocation origin = getService().getPickupLocation();
             if(ApplicationLibrary.isSameLocation(this.service.getUser().getLocation(), origin)) {
-                // notifyArrivalAtPickupLocation();
-                this.startService();
+
+                notifyArrivalAtPickupLocation();
+
             }
 
             // get origin and destination of current service
@@ -155,11 +144,21 @@ public class MicroVehicle implements IVehicle  {
         }
     } // method move
 
+    /**
+     * Cost of service is the distance * vehicle rate
+     *
+     * @return int, service cost
+     */
     @Override
     public int calculateCost() {
         return this.service.calculateDistance();
-    }
+    } // method calculateCost
 
+    /**
+     * Shows locations on route as a string
+     *
+     * @return route as a string
+     */
     @Override
     public String showDrivingRoute() {
         StringBuilder s = new StringBuilder();
@@ -168,8 +167,14 @@ public class MicroVehicle implements IVehicle  {
             s.append(l.toString()).append(" ");
 
         return s.toString();
-    }
+    } // method showDrivingRoute
 
+    /**
+     * Represents the vehicle's status or route
+     *
+     * @return String, vehicle
+     */
+    @Override
     public String toString() {
         String s = " ";
 
@@ -184,22 +189,14 @@ public class MicroVehicle implements IVehicle  {
         return getId() + " at " + getLocation() + s;
     } // method toString
 
-    public IService getService() {
-        if (this.status != VehicleStatus.FREE) {
-            return this.service;
-        }
-        return null;
-    }
-
-    public IService getServices() {
-        return this.service;
-    }
-
-    @Override
-    public void setStatistics(IStatistics statistics) {
-        this.statistics = statistics;
-    }
-
+    /**
+     * Sets a micro vehicle's route to a destination
+     * Uses location to get the vehicles coordinates
+     *
+     * @param location, ILocation
+     * @param destination, ILocation
+     * @return route, as List<ILocation>
+     */
     private List<ILocation> setDrivingRouteToDestination(ILocation location, ILocation destination) {
         List<ILocation> route = new ArrayList<ILocation>();
 
@@ -225,6 +222,56 @@ public class MicroVehicle implements IVehicle  {
         }
 
         return route;
+    } // method setDrivingRouteToDestination
+
+
+    /* Accessors & Mutators */
+    @Override
+    public int getId() {
+        return this.id;
+    } // method getId
+
+    @Override
+    public ILocation getLocation() {
+        return this.location;
+    } // method getLocation
+
+    @Override
+    public ILocation getDestination() {
+        return this.destination;
+    } // method getDestination
+
+    @Override
+    public IStatistics getStatistics() {
+        return this.statistics;
+    } // method getStatistics
+
+    @Override
+    public VehicleStatus getStatus() {
+        return this.status;
+    } // method getStatus
+
+    @Override
+    public IService getService() {
+        if (this.status != VehicleStatus.FREE) {
+            return this.service;
+        }
+        return null;
+    } // method getService
+
+    @Override
+    public List<IService> getServices() {
+        return null;
     }
 
-}
+    @Override
+    public void setStatistics(IStatistics statistics) {
+        this.statistics = statistics;
+    } // method statistics
+
+    @Override
+    public void setCompany(ITaxiCompany company) {
+        this.company = company;
+    } // method setCompany
+
+} // class MicroVehicle

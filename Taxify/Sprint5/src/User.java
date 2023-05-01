@@ -1,4 +1,4 @@
-// Sprint 4 Project: Taxify
+// Sprint 5 Project: Taxify
 // Marissa Bui - CSCI 3300
 
 import java.util.ArrayList;
@@ -17,8 +17,6 @@ public class User implements IUser {
     /** Taxi company */
     private ITaxiCompany company;
 
-    /** User request for a service or not */
-
     /** User service */
     private IService service;
 
@@ -29,7 +27,6 @@ public class User implements IUser {
 
     /** User route to Micro Vehicles */
     private List<ILocation> route;
-
 
     /** Basic constructor */
     public User(int id, String firstName, String lastName, ILocation location, List<IVehicle> vehicles) {
@@ -70,13 +67,14 @@ public class User implements IUser {
     @Override
     public void requestService() {
         this.company.provideService(this.id);
-
+        this.route = null;
     }
 
     public void requestSharedService() {
-        // requests service 50% of the time
+        // accepts service 50% of the time
         if (ApplicationLibrary.rand() % 2 == 0) {
             this.company.provideSharedService(this.id);
+            this.route = null;
         }
     }
 
@@ -117,7 +115,7 @@ public class User implements IUser {
         } else if (hasService() && this.service.getVehicle() instanceof MicroVehicle) {
             s = " booked a micro vehicle service at " + this.destination + " is free with path " + showUserRoute();
         } else if (hasService()) {
-            s = " with service " + service.toString() + " and " + this.service.getVehicle() + " " + this.service.getVehicle().getId();
+            s = "WHY ARE YOU HERE? ";
         }
         return "User " + this.id + " at " + this.location + s;
     } // method toString
@@ -143,8 +141,9 @@ public class User implements IUser {
             this.route.remove(0);
         }
 
+
         // if the user has not requested a service and their route is empty
-         if (hasService() && this.service.getVehicle() instanceof MicroVehicle) {
+        if (hasService() && this.service.getVehicle() instanceof MicroVehicle) {
 
             // get destination of current service
             ILocation destination = this.service.getPickupLocation();
@@ -153,22 +152,23 @@ public class User implements IUser {
             this.route = setRouteToDestination(this.location, this.destination);
 
             // notify when user arrives at the micro vehicle location
-            if (ApplicationLibrary.isSameLocation(this.location, destination)) {
+            if (ApplicationLibrary.isSameLocation(this.location, this.destination)) {
 
                 notifyArrivalAtPickupLocation();
+                this.destination = this.service.getDropoffLocation();
 
             }
-        } else {
+        } else if (service == null) {
             this.destination = ApplicationLibrary.randomLocation(this.location);
             this.route = setRouteToDestination(this.location, this.destination);
         }
+
     } // method move
 
     public void notifyArrivalAtPickupLocation() {
         // notify the company that the vehicle is at the pickup location and start the service
         this.company.userArrivesAtMicroVehicleLocation(this);
         this.route = null;
-
 
     } // method notifyArrivalAtPickupLocation
 

@@ -1,4 +1,4 @@
-// Sprint 4 Project: Taxify
+// Sprint 5 Project: Taxify
 // Marissa Bui - CSCI 3300
 
 import java.util.ArrayList;
@@ -41,62 +41,6 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
         this.route = setDrivingRouteToDestination(this.location, this.destination);
     }
 
-    /* Accessor & Mutator Methods */
-    @Override
-    public int getId() {
-        return this.id;
-    }
-
-    @Override
-    public ILocation getLocation() {
-        return this.location;
-    }
-
-    @Override
-    public ILocation getDestination() {
-        return this.destination;
-    }
-
-    @Override
-    public List<IService> getServices() {
-        return this.service;
-    }
-
-    @Override
-    public void setService(List<IService> service) {
-        this.service = service;
-    }
-
-    @Override
-    public IStatistics getStatistics() {
-        return this.statistics;
-    }
-
-    @Override
-    public VehicleStatus getStatus() {
-        return this.status;
-    }
-
-    @Override
-    public void setCompany(ITaxiCompany company) {
-        this.company = company;
-    }
-
-    public void setLocation(ILocation location) {this.location = location;}
-
-    public void setDestination(ILocation destination) {
-        this.destination = destination;
-    }
-
-    // ADD TO INTERFACE
-    public List<ILocation> getRoute() {
-        return route;
-    }
-
-    public void setRoute(List<ILocation> route) {
-        this.route = route;
-    }
-
     /**
      * Picks a service & sends Vehicle to pick up location
      * Sets route and changes vehicle status to pick up
@@ -113,6 +57,7 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
         this.route = setDrivingRouteToDestination(this.location, this.destination);
         this.status = VehicleStatus.PICKUP;
 
+        // a user will stop moving once a vehicle is moving to their location
         service.getUser().setRoute(null);
     } // method pickService
 
@@ -156,26 +101,21 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
             this.statistics.updateDistance(s.calculateDistance());
         }
 
+        // update user's location to the dropoff and end their service
+        IUser currentUser = getService().getUser();
+        currentUser.setLocation(this.location);
+        currentUser.setService(null);
+
         if(this.service.size() == 1) {
-            IUser currentUser = getService().getUser();
-            currentUser.setLocation(this.location);
-            /*currentUser.setDestination(ApplicationLibrary.randomLocation(this.location));
-            currentUser.setRoute(setDrivingRouteToDestination(currentUser.getLocation(), currentUser.getDestination()));
-            currentUser.setService(null);*/
-            currentUser.setService(null);
 
             this.service = null;
             this.destination = ApplicationLibrary.randomLocation(this.location);
             this.route = setDrivingRouteToDestination(this.location, this.destination);
             this.status = VehicleStatus.FREE;
-        } else {
-            IUser currentUser = getService().getUser();
-            /*currentUser.setLocation(this.location);
-            currentUser.setDestination(ApplicationLibrary.randomLocation(this.location));
-            currentUser.setRoute(setDrivingRouteToDestination(currentUser.getLocation(), currentUser.getDestination()));
-           */
-            currentUser.setService(null);
 
+        } else {
+
+            // if there is another service, set the route to the next drop-off location
             this.service.remove(0);
             this.destination = getService().getDropoffLocation();
             this.route = setDrivingRouteToDestination(this.location,this.destination);
@@ -183,28 +123,21 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
 
     } // method endService
 
-    /**
-     * When the Vehicle arrives at pick-up location the company is notified
-     * Starts ride service
-     */
+    /** At the pick-up location the company is notified and a regular service starts */
     @Override
     public void notifyArrivalAtPickupLocation() {
-        // notify the company that the vehicle is at the pickup location and start the service
-
         this.company.arrivedAtPickupLocation(this);
         this.startService();
 
     } // method notifyArrivalAtPickupLocation
 
+    /** At the secondary pick-up location the company is notified and a shared service starts */
     public void notifyArrivalAtSecondaryPickUpLocation() {
         this.company.arrivedAtSecondaryPickupLocation(this);
         this.startSharedService();
     }
 
-    /**
-     * When the Vehicle arrives at drop-off location the company is notified
-     * Ends ride service
-     */
+    /** At the drop-off location the company is notified and the service ends */
     @Override
     public void notifyArrivalAtDropOffLocation() {
         this.company.arrivedAtDropOffLocation(this);
@@ -212,6 +145,7 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
 
     } // method notifyArrivalAtDropOffLocation
 
+    /** At the secondary drop-off location the company is notified and the service ends */
     public void notifyArrivalAtSecondaryDropOffLocation() {
         this.company.arrivedAtSecondaryDropOffLocation(this);
         this.endService();
@@ -283,19 +217,10 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
         }
     } // method move
 
-
-    public IService getService() {
-        if(getStatus() != VehicleStatus.FREE) {
-            return this.service.get(this.service.size() - 1); // latest service
-        } else {
-            return null;
-        }
-    } // method getService
-
     /**
      * Cost of service is the distance * vehicle rate
      *
-     * @return int, distance travelled
+     * @return int, service cost
      */
     @Override
     public int calculateCost() {
@@ -326,6 +251,11 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
         return s.toString();
     } // method showDrivingRoute
 
+    /**
+     * Represents the vehicle's status or route
+     *
+     * @return String, vehicle
+     */
     @Override
     public String toString() {
         String s = "";
@@ -377,8 +307,57 @@ public abstract class Vehicle implements IVehicle, ISharedVehicle {
         return route;
     } // method setDrivingRouteToDestination
 
+    /* Accessor & Mutator Methods */
+    @Override
+    public int getId() {
+        return this.id;
+    } // method getId
+
+    @Override
+    public ILocation getLocation() {
+        return this.location;
+    } // method getLocation
+
+    @Override
+    public ILocation getDestination() {
+        return this.destination;
+    } // method getDestination
+
+    @Override
+    public List<IService> getServices() {
+        return this.service;
+    } // method getServices
+
+    public IService getService() {
+        if(getStatus() != VehicleStatus.FREE) {
+            return this.service.get(this.service.size() - 1); // latest service
+        } else {
+            return null;
+        }
+    } // method getService
+
+    @Override
+    public void setService(List<IService> service) {
+        this.service = service;
+    } // method setService
+
+    @Override
+    public IStatistics getStatistics() {
+        return this.statistics;
+    } // method getStatistics
+
+    @Override
+    public VehicleStatus getStatus() {
+        return this.status;
+    } // method getStatus
+
+    @Override
+    public void setCompany(ITaxiCompany company) {
+        this.company = company;
+    } // method setCompany
+
     @Override
     public void setStatistics(IStatistics statistics) {
         this.statistics = statistics;
-    }
+    } // method statistics
 } // class Vehicle

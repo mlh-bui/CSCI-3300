@@ -20,5 +20,6 @@ public interface IVehicle {
     String showDrivingRoute();
     String toString();
     IService getService();
+    List<IService> getServices();
     void setStatistics(IStatistics statistics);
 }

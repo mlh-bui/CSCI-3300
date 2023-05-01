@@ -1,3 +1,6 @@
+// Sprint 5 Project: Taxify
+// Marissa Bui - CSCI 3300
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,16 +105,16 @@ public class TestProgram {
 
             app.update();
 
-            int i = ApplicationLibrary.rand() % 4;
+            int i = ApplicationLibrary.rand() % 8;
 
             if (i == 0) {
                app.requestService();
             } else if (i == 1){
-                app.requestSharedService();
+              //  app.requestSharedService();
             } else if (i == 2) {
                 app.cancelService();
-            } else {
-                //app.requestMicroService();
+            } else if (i == 3){
+                app.requestMicroService();
             }
 
         } while (app.getTotalServices() != 0);

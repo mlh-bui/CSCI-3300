@@ -1,4 +1,4 @@
-// Sprint 4 Project: Taxify
+// Sprint 5 Project: Taxify
 // Marissa Bui - CSCI 3300
 
 import java.util.List;
@@ -111,7 +111,6 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
             // request service if the user does not have one yet
             if(user.getService() == null) {
                 user.requestSharedService();
-                System.out.println("service was null");
             }
         }
 
@@ -144,9 +143,6 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
 
             vehicles.get(index).getService().getUser().cancelRide();
         }
-        /*if(index != -1 && users.get(index).getService() == null) {
-            this.users.get(index).cancelRide();
-        }*/
 
     } // method cancelService
 
@@ -172,12 +168,11 @@ public class ApplicationSimulator implements IApplicationSimulator, IObserver {
             counter++;
         }
         // continue searching while user at index has a service
-        while(users.get(index).getService() != null && counter < 50);
+        while(users.get(index).hasService() && counter < 50);
 
         if(counter == 50) {
             index = -1;
         }
-
 
         return index; // return a user without a service
     } // method findFreeUser

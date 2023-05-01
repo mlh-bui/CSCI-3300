@@ -7,7 +7,6 @@ public interface IMicroVehicle {
     void notifyUserArrivalAtPickupLocation();
     void endService();
     void startService();
-    void bookedService(IUser user);
     void setCompany(ITaxiCompany company);
     IStatistics getStatistics();
     ILocation getDestination();
